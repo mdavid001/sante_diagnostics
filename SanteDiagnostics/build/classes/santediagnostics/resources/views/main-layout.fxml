@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    main-layout.fxml
+    Shared application shell for all three roles (Super Admin, Lab Attendant, Customer).
+    The sidebar nav buttons are role-driven: MainLayoutController shows/hides each
+    nav item based on Session.getCurrentUser().getRole(). Content pages are loaded
+    into #contentArea via MainLayoutController.loadContent("resources/views/<page>.fxml").
+-->
+
+<BorderPane prefHeight="640.0" prefWidth="1040.0" styleClass="app-root" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="santediagnostics.resources.controllers.MainLayoutController">
+
+    <!-- ===================== SIDEBAR ===================== -->
+    <left>
+        <VBox fx:id="sidebar" prefWidth="248.0" styleClass="sidebar">
+
+            <!-- Brand header -->
+            <HBox alignment="CENTER_LEFT" spacing="10.0" styleClass="sidebar-brand">
+                <Label styleClass="sidebar-logo" text="⚕" />
+                <VBox spacing="0.0">
+                    <Label styleClass="sidebar-brand-name" text="Sante Diagnostics" />
+                    <Label styleClass="sidebar-brand-sub" text="LIMS" />
+                </VBox>
+            </HBox>
+
+            <!-- Role label for the current section -->
+            <Label fx:id="roleLabel" styleClass="sidebar-section-label" text="MENU">
+                <VBox.margin><Insets bottom="6.0" left="20.0" top="22.0" /></VBox.margin>
+            </Label>
+
+            <!-- ===== Navigation items =====
+                 Each button is hidden/shown by the controller per role.
+                 onAction handlers live in MainLayoutController. -->
+            <VBox fx:id="navBox" spacing="4.0">
+                <padding><Insets left="12.0" right="12.0" /></padding>
+
+                <!-- Shared / overview -->
+                <Button fx:id="navDashboard" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavDashboard" styleClass="nav-item" text="Dashboard">
+                    <graphic><FontAwesomeIconView glyphName="DASHBOARD" size="16" /></graphic>
+                </Button>
+
+                <!-- ===== Super Admin ===== -->
+                <Button fx:id="navTestBuilder" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavTestBuilder" styleClass="nav-item" text="Test Builder">
+                    <graphic><FontAwesomeIconView glyphName="FLASK" size="16" /></graphic>
+                </Button>
+                <Button fx:id="navUserManagement" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavUserManagement" styleClass="nav-item" text="User Management">
+                    <graphic><FontAwesomeIconView glyphName="USERS" size="16" /></graphic>
+                </Button>
+                <Button fx:id="navAuditTrail" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavAuditTrail" styleClass="nav-item" text="Audit Trail">
+                    <graphic><FontAwesomeIconView glyphName="SHIELD" size="16" /></graphic>
+                </Button>
+
+                <!-- ===== Shared: Admin + Lab Attendant ===== -->
+                <Button fx:id="navRequestQueue" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavRequestQueue" styleClass="nav-item" text="Test Requests">
+                    <graphic><FontAwesomeIconView glyphName="INBOX" size="16" /></graphic>
+                </Button>
+
+                <!-- ===== Lab Attendant ===== -->
+                <Button fx:id="navSampleTracking" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavSampleTracking" styleClass="nav-item" text="Sample Tracking">
+                    <graphic><FontAwesomeIconView glyphName="HEARTBEAT" size="16" /></graphic>
+                </Button>
+                <Button fx:id="navResultUpload" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavResultUpload" styleClass="nav-item" text="Upload Results">
+                    <graphic><FontAwesomeIconView glyphName="UPLOAD" size="16" /></graphic>
+                </Button>
+
+                <!-- ===== Customer ===== -->
+                <Button fx:id="navCatalog" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavCatalog" styleClass="nav-item" text="Browse Tests">
+                    <graphic><FontAwesomeIconView glyphName="LIST_ALT" size="16" /></graphic>
+                </Button>
+                <Button fx:id="navResultVault" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavResultVault" styleClass="nav-item" text="My Results">
+                    <graphic><FontAwesomeIconView glyphName="FOLDER_OPEN" size="16" /></graphic>
+                </Button>
+                <Button fx:id="navActiveTests" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavActiveTests" styleClass="nav-item" text="Active Tests">
+                    <graphic><FontAwesomeIconView glyphName="FLASK" size="16" /></graphic>
+                </Button>
+                <Button fx:id="navProfile" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleNavProfile" styleClass="nav-item" text="My Profile">
+                    <graphic><FontAwesomeIconView glyphName="USER" size="16" /></graphic>
+                </Button>
+            </VBox>
+
+            <!-- pushes the footer to the bottom -->
+            <Region VBox.vgrow="ALWAYS" />
+
+            <!-- Logout footer -->
+            <VBox styleClass="sidebar-footer">
+                <padding><Insets bottom="16.0" left="12.0" right="12.0" top="10.0" /></padding>
+                <Button fx:id="logoutBtn" alignment="CENTER_LEFT" graphicTextGap="14.0" maxWidth="Infinity" mnemonicParsing="false" onAction="#handleLogout" styleClass="nav-item nav-logout" text="Log out">
+                    <graphic><FontAwesomeIconView glyphName="SIGN_OUT" size="16" /></graphic>
+                </Button>
+            </VBox>
+        </VBox>
+    </left>
+
+    <!-- ===================== TOPBAR + CONTENT ===================== -->
+    <center>
+        <BorderPane styleClass="content-frame">
+
+            <!-- Topbar -->
+            <top>
+                <HBox alignment="CENTER_LEFT" styleClass="topbar">
+                    <VBox spacing="2.0">
+                        <Label fx:id="pageTitleLabel" styleClass="topbar-title" text="Dashboard" />
+                        <Label fx:id="pageSubtitleLabel" styleClass="topbar-subtitle" text="Welcome back" />
+                    </VBox>
+
+                    <Region HBox.hgrow="ALWAYS" />
+
+                    <!-- Current user chip -->
+                    <HBox alignment="CENTER" spacing="10.0" styleClass="user-chip">
+                        <VBox alignment="CENTER_RIGHT" spacing="0.0">
+                            <Label fx:id="userNameLabel" styleClass="user-chip-name" text="User Name" />
+                            <Label fx:id="userRoleLabel" styleClass="user-chip-role" text="Role" />
+                        </VBox>
+                        <StackPane styleClass="user-avatar">
+                            <Label fx:id="userInitialsLabel" styleClass="user-avatar-text" text="?" />
+                        </StackPane>
+                    </HBox>
+                </HBox>
+            </top>
+
+            <!-- Swappable content region: controllers load pages into here -->
+            <center>
+                <StackPane fx:id="contentArea" styleClass="content-area">
+                    <!-- MainLayoutController.loadContent(...) injects the active page here -->
+                </StackPane>
+            </center>
+        </BorderPane>
+    </center>
+</BorderPane>

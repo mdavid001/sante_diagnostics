@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="santediagnostics.resources.controllers.CustomerDashboardController">
+
+    <VBox spacing="24.0" styleClass="dashboard-container">
+        <padding><Insets bottom="20.0" left="4.0" right="4.0" top="4.0" /></padding>
+
+        <!-- ==================== WELCOME HEADER ==================== -->
+        <GridPane prefHeight="100.0" style="-fx-background-color: #0E3A3F; -fx-background-radius: 12;">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+            <children>
+                <VBox alignment="CENTER_LEFT" GridPane.columnIndex="0">
+                    <padding><Insets bottom="20.0" left="24.0" top="20.0" /></padding>
+                    <Label fx:id="welcomeLabel" text="Welcome" textFill="WHITE">
+                        <font><Font size="22.0" /></font>
+                    </Label>
+                    <Label text="What would you like to do today?" textFill="#9CACB0">
+                        <font><Font size="13.0" /></font>
+                        <VBox.margin><Insets top="4.0" /></VBox.margin>
+                    </Label>
+                </VBox>
+                <VBox alignment="CENTER_RIGHT" GridPane.columnIndex="1">
+                    <padding><Insets right="24.0" /></padding>
+                    <StackPane styleClass="dash-avatar">
+                        <Label fx:id="avatarInitials" text="?" textFill="WHITE">
+                            <font><Font name="System Bold" size="16.0" /></font>
+                        </Label>
+                    </StackPane>
+                </VBox>
+            </children>
+        </GridPane>
+
+        <!-- ==================== 2x2 CARD GRID ==================== -->
+        <GridPane hgap="20.0" vgap="20.0">
+            <columnConstraints>
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+            </columnConstraints>
+            <rowConstraints>
+                <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
+                <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
+            </rowConstraints>
+
+            <!-- Card 1: Browse Tests (filled dark) -->
+            <GridPane onMouseClicked="#handleBrowseTests" styleClass="dash-card-filled" GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <VBox alignment="BOTTOM_LEFT" GridPane.rowIndex="1">
+                        <padding><Insets left="20.0" /></padding>
+                        <FontAwesomeIconView fill="WHITE" glyphName="LIST_ALT" size="25">
+                            <VBox.margin><Insets bottom="5.0" /></VBox.margin>
+                        </FontAwesomeIconView>
+                        <Label text="Browse Tests" textFill="WHITE">
+                            <font><Font name="System Bold" size="14.0" /></font>
+                            <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+                        </Label>
+                    </VBox>
+                    <VBox alignment="TOP_RIGHT" GridPane.columnIndex="1">
+                        <padding><Insets right="10.0" top="5.0" /></padding>
+                        <FontAwesomeIconView fill="#fffefe" glyphName="ARROW_RIGHT" rotate="-43.3" size="15" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <!-- Card 2: My Results (outlined) -->
+            <GridPane onMouseClicked="#handleMyResults" styleClass="dash-card-outlined" GridPane.columnIndex="1" GridPane.rowIndex="0">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <VBox alignment="BOTTOM_LEFT" GridPane.rowIndex="1">
+                        <padding><Insets left="20.0" /></padding>
+                        <FontAwesomeIconView fill="#11242A" glyphName="FOLDER_OPEN" size="25">
+                            <VBox.margin><Insets bottom="5.0" /></VBox.margin>
+                        </FontAwesomeIconView>
+                        <Label style="-fx-text-fill: #11242A;" text="My Results" textFill="#11242A">
+                            <font><Font name="System Bold" size="14.0" /></font>
+                            <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+                        </Label>
+                    </VBox>
+                    <VBox alignment="TOP_RIGHT" GridPane.columnIndex="1">
+                        <padding><Insets right="10.0" top="5.0" /></padding>
+                        <FontAwesomeIconView fill="#11242A" glyphName="ARROW_RIGHT" rotate="-43.3" size="15" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <!-- Card 3: Active Tests (outlined) -->
+            <GridPane onMouseClicked="#handleActiveTests" styleClass="dash-card-outlined" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <VBox alignment="BOTTOM_LEFT" GridPane.rowIndex="1">
+                        <padding><Insets left="20.0" /></padding>
+                        <FontAwesomeIconView fill="#11242A" glyphName="FLASK" size="25">
+                            <VBox.margin><Insets bottom="5.0" /></VBox.margin>
+                        </FontAwesomeIconView>
+                        <Label style="-fx-text-fill: #11242A;" text="Active Tests" textFill="#11242A">
+                            <font><Font name="System Bold" size="14.0" /></font>
+                            <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+                        </Label>
+                    </VBox>
+                    <VBox alignment="TOP_RIGHT" GridPane.columnIndex="1">
+                        <padding><Insets right="10.0" top="5.0" /></padding>
+                        <FontAwesomeIconView fill="#11242A" glyphName="ARROW_RIGHT" rotate="-43.3" size="15" />
+                    </VBox>
+                </children>
+            </GridPane>
+
+            <!-- Card 4: Profile (outlined) -->
+            <GridPane onMouseClicked="#handleProfile" styleClass="dash-card-outlined" GridPane.columnIndex="1" GridPane.rowIndex="1">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                    <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
+                </rowConstraints>
+                <children>
+                    <VBox alignment="BOTTOM_LEFT" GridPane.rowIndex="1">
+                        <padding><Insets left="20.0" /></padding>
+                        <FontAwesomeIconView fill="#11242A" glyphName="USER" size="25">
+                            <VBox.margin><Insets bottom="5.0" /></VBox.margin>
+                        </FontAwesomeIconView>
+                        <Label style="-fx-text-fill: #11242A;" text="Profile" textFill="#11242A">
+                            <font><Font name="System Bold" size="14.0" /></font>
+                            <VBox.margin><Insets bottom="10.0" /></VBox.margin>
+                        </Label>
+                    </VBox>
+                    <VBox alignment="TOP_RIGHT" GridPane.columnIndex="1">
+                        <padding><Insets right="10.0" top="5.0" /></padding>
+                        <FontAwesomeIconView fill="#11242A" glyphName="ARROW_RIGHT" rotate="-43.3" size="15" />
+                    </VBox>
+                </children>
+            </GridPane>
+        </GridPane>
+
+        <!-- ==================== ACTIVE TESTS TABLE ==================== -->
+        <VBox spacing="10.0">
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label styleClass="section-title" text="Active Tests" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label styleClass="muted-label" text="Live countdown to estimated result" />
+            </HBox>
+
+            <TableView fx:id="activeTestsTable" prefHeight="220.0" styleClass="data-table">
+                <columns>
+                    <TableColumn fx:id="colTestName" prefWidth="170.0" text="Test" />
+                    <TableColumn fx:id="colOrderDate" prefWidth="120.0" text="Order Date" />
+                    <TableColumn fx:id="colPaymentStatus" prefWidth="110.0" text="Payment" />
+                    <TableColumn fx:id="colSampleStatus" prefWidth="120.0" text="Status" />
+                    <TableColumn fx:id="colCountdown" prefWidth="150.0" text="Time Remaining" />
+                </columns>
+                <placeholder>
+                    <Label styleClass="muted-label" text="No active tests right now." />
+                </placeholder>
+            </TableView>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

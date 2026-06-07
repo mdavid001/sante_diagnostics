@@ -1,0 +1,210 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll"
+            stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="santediagnostics.resources.controllers.UserManagementController">
+
+    <VBox spacing="20.0" styleClass="dashboard-container">
+        <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0"/></padding>
+
+        <!-- ── Row 1: filter chips + count + add button ── -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <HBox spacing="8.0" styleClass="filter-bar">
+                <fx:define>
+                    <ToggleGroup fx:id="filterGroup"/>
+                </fx:define>
+                <ToggleButton fx:id="filterAll" text="All" selected="true"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterAll"/>
+                <ToggleButton fx:id="filterStaff" text="Staff"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterStaff"/>
+                <ToggleButton fx:id="filterCustomers" text="Customers"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterCustomers"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="countLabel" styleClass="muted-label" text=""/>
+            <Button fx:id="refreshBtn" text="Refresh" onAction="#handleRefresh"
+                    styleClass="ghost-btn"/>
+            <Button text="+ Add User" onAction="#handleOpenCreate"
+                    styleClass="primary-btn"/>
+        </HBox>
+
+        <!-- ── Row 2: search bar ── -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <TextField fx:id="searchField"
+                       promptText="Search by name or email…"
+                       styleClass="form-field"
+                       HBox.hgrow="ALWAYS"
+                       maxWidth="Infinity"
+                       onKeyReleased="#handleSearch"/>
+        </HBox>
+
+        <!-- ── Users table ── -->
+        <StackPane>
+            <TableView fx:id="userTable" styleClass="data-table" prefHeight="460.0">
+                <columns>
+                    <TableColumn fx:id="colName"      prefWidth="180.0" text="Name"/>
+                    <TableColumn fx:id="colEmail"     prefWidth="210.0" text="Email"/>
+                    <TableColumn fx:id="colRole"      prefWidth="130.0" text="Role"/>
+                    <TableColumn fx:id="colStatus"    prefWidth="100.0" text="Status"/>
+                    <TableColumn fx:id="colCreatedBy" prefWidth="150.0" text="Created By"/>
+                    <TableColumn fx:id="colAction"    prefWidth="120.0" text="Action"/>
+                </columns>
+                <placeholder>
+                    <Label styleClass="muted-label" text="No users to show."/>
+                </placeholder>
+            </TableView>
+
+            <!-- Loading overlay -->
+            <StackPane fx:id="overlayPane"
+                       style="-fx-background-color: rgba(244,248,248,0.6);"
+                       visible="false" managed="false">
+                <Label styleClass="muted-label" text="Working..."/>
+            </StackPane>
+
+            <!-- ── Create-user popup ── -->
+            <StackPane fx:id="createPopup"
+                       style="-fx-background-color: rgba(14,58,63,0.32);"
+                       visible="false" managed="false">
+                <VBox alignment="TOP_CENTER" maxWidth="400.0"
+                      styleClass="confirm-card" spacing="0">
+
+                    <Label text="Add New User" styleClass="confirm-title">
+                        <VBox.margin><Insets bottom="6.0"/></VBox.margin>
+                    </Label>
+                    <Label text="The user will be required to change their password on first login."
+                           styleClass="confirm-message" wrapText="true"
+                           maxWidth="340.0" textAlignment="CENTER">
+                        <VBox.margin><Insets bottom="20.0"/></VBox.margin>
+                    </Label>
+
+                    <Label text="First Name" styleClass="form-label"
+                           style="-fx-alignment: CENTER-LEFT; -fx-max-width: Infinity;">
+                        <VBox.margin><Insets bottom="4.0"/></VBox.margin>
+                    </Label>
+                    <TextField fx:id="firstNameField" promptText="e.g. Tosin"
+                               styleClass="form-field" maxWidth="340.0">
+                        <VBox.margin><Insets bottom="12.0"/></VBox.margin>
+                    </TextField>
+
+                    <Label text="Last Name" styleClass="form-label"
+                           style="-fx-alignment: CENTER-LEFT; -fx-max-width: Infinity;">
+                        <VBox.margin><Insets bottom="4.0"/></VBox.margin>
+                    </Label>
+                    <TextField fx:id="lastNameField" promptText="e.g. Olayebi"
+                               styleClass="form-field" maxWidth="340.0">
+                        <VBox.margin><Insets bottom="12.0"/></VBox.margin>
+                    </TextField>
+
+                    <Label text="Email Address" styleClass="form-label"
+                           style="-fx-alignment: CENTER-LEFT; -fx-max-width: Infinity;">
+                        <VBox.margin><Insets bottom="4.0"/></VBox.margin>
+                    </Label>
+                    <TextField fx:id="emailField" promptText="e.g. tosin@email.com"
+                               styleClass="form-field" maxWidth="340.0">
+                        <VBox.margin><Insets bottom="16.0"/></VBox.margin>
+                    </TextField>
+
+                    <HBox fx:id="roleToggleRow" alignment="CENTER" spacing="10.0">
+                        <VBox.margin><Insets bottom="16.0"/></VBox.margin>
+                        <Label text="Role:" styleClass="form-label"/>
+                        <fx:define>
+                            <ToggleGroup fx:id="roleGroup"/>
+                        </fx:define>
+                        <ToggleButton fx:id="roleCustomer" text="Customer"
+                                      toggleGroup="$roleGroup"
+                                      styleClass="filter-chip" selected="true"/>
+                        <ToggleButton fx:id="roleAttendant" text="Lab Attendant"
+                                      toggleGroup="$roleGroup"
+                                      styleClass="filter-chip"/>
+                    </HBox>
+
+                    <Label fx:id="formError" styleClass="error-label"
+                           wrapText="true" maxWidth="340.0"
+                           visible="false" managed="false">
+                        <VBox.margin><Insets bottom="10.0"/></VBox.margin>
+                    </Label>
+
+                    <HBox alignment="CENTER" spacing="12.0">
+                        <VBox.margin><Insets top="4.0"/></VBox.margin>
+                        <Button text="Cancel" onAction="#handleCancelCreate"
+                                styleClass="ghost-btn" prefWidth="130.0"/>
+                        <Button text="Create Account" onAction="#handleSubmitCreate"
+                                styleClass="primary-btn" prefWidth="150.0"/>
+                    </HBox>
+                </VBox>
+            </StackPane>
+
+            <!-- ── Success popup ── -->
+            <StackPane fx:id="successPopup"
+                       style="-fx-background-color: rgba(14,58,63,0.32);"
+                       visible="false" managed="false">
+                <VBox alignment="CENTER" maxWidth="400.0"
+                      styleClass="confirm-card" spacing="0">
+
+                    <StackPane styleClass="confirm-icon-circle">
+                        <Label text="✓" styleClass="confirm-icon-mark"/>
+                    </StackPane>
+
+                    <Label text="Account Created" styleClass="confirm-title">
+                        <VBox.margin><Insets top="14.0" bottom="6.0"/></VBox.margin>
+                    </Label>
+                    <Label text="Share these credentials with the user. They will be asked to change their password on first login."
+                           styleClass="confirm-message" wrapText="true"
+                           maxWidth="340.0" textAlignment="CENTER">
+                        <VBox.margin><Insets bottom="20.0"/></VBox.margin>
+                    </Label>
+
+                    <HBox spacing="10.0" maxWidth="340.0" alignment="CENTER_LEFT">
+                        <VBox.margin><Insets bottom="8.0"/></VBox.margin>
+                        <Label text="Name:" styleClass="form-label" minWidth="80.0"/>
+                        <Label fx:id="successName"
+                               style="-fx-font-size: 13px; -fx-text-fill: #11242A; -fx-font-weight: bold;"/>
+                    </HBox>
+                    <HBox spacing="10.0" maxWidth="340.0" alignment="CENTER_LEFT">
+                        <VBox.margin><Insets bottom="8.0"/></VBox.margin>
+                        <Label text="Email:" styleClass="form-label" minWidth="80.0"/>
+                        <Label fx:id="successEmail"
+                               style="-fx-font-size: 13px; -fx-text-fill: #11242A;"/>
+                    </HBox>
+                    <HBox spacing="10.0" maxWidth="340.0" alignment="CENTER_LEFT">
+                        <VBox.margin><Insets bottom="8.0"/></VBox.margin>
+                        <Label text="Role:" styleClass="form-label" minWidth="80.0"/>
+                        <Label fx:id="successRole"
+                               style="-fx-font-size: 13px; -fx-text-fill: #11242A;"/>
+                    </HBox>
+                    <HBox spacing="10.0" maxWidth="340.0" alignment="CENTER_LEFT">
+                        <VBox.margin><Insets bottom="22.0"/></VBox.margin>
+                        <Label text="Password:" styleClass="form-label" minWidth="80.0"/>
+                        <Label fx:id="successPassword"
+                               style="-fx-font-family: monospace; -fx-font-size: 15px;
+                                      -fx-font-weight: bold; -fx-text-fill: #0E8A82;
+                                      -fx-background-color: #E6F7F6;
+                                      -fx-background-radius: 6; -fx-padding: 4 10 4 10;"/>
+                    </HBox>
+
+                    <Button text="Done" onAction="#handleDismissSuccess"
+                            styleClass="primary-btn" prefWidth="160.0"/>
+                </VBox>
+            </StackPane>
+
+        </StackPane>
+    </VBox>
+</ScrollPane>

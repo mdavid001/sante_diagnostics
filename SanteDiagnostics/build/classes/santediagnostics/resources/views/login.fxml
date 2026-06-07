@@ -1,0 +1,234 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ProgressIndicator?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.RowConstraints?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<BorderPane prefHeight="560.0" prefWidth="860.0" styleClass="root"
+            stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="santediagnostics.resources.controllers.LoginController">
+    <center>
+        <StackPane>
+            <GridPane styleClass="form-surface">
+                <columnConstraints>
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="46.0" />
+                    <ColumnConstraints hgrow="ALWAYS" percentWidth="54.0" />
+                </columnConstraints>
+                <rowConstraints>
+                    <RowConstraints vgrow="ALWAYS" />
+                </rowConstraints>
+
+                <!-- LEFT: brand panel -->
+                <VBox alignment="CENTER" styleClass="brand-panel" GridPane.columnIndex="0">
+                    <Label styleClass="brand-logo" text="⚕" />
+                    <Label styleClass="brand-name" text="Sante Diagnostics" />
+                    <Label maxWidth="240.0" styleClass="brand-sub"
+                           text="Laboratory Information Management System" />
+                    <Region prefHeight="26.0" />
+                    <Label styleClass="brand-pill"
+                           text="Administrative Governance • Precision • Transparency" />
+                </VBox>
+
+                <!-- RIGHT: auth forms -->
+                <TabPane fx:id="tabPane" styleClass="auth-tab-pane"
+                         tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1">
+                    <tabs>
+                        <!-- ===== LOGIN ===== -->
+                        <Tab fx:id="loginTab" text="Login">
+                            <content>
+                                <VBox styleClass="form-container">
+                                    <padding><Insets top="26.0" /></padding>
+
+                                    <Label styleClass="auth-title" text="Welcome back" />
+                                    <Label styleClass="auth-subtitle"
+                                           text="Log in to access the laboratory system." />
+
+                                    <Label styleClass="field-label" text="Email">
+                                        <VBox.margin><Insets bottom="6.0" top="22.0" /></VBox.margin>
+                                    </Label>
+                                    <TextField fx:id="emailTextField"
+                                               promptText="you@example.com"
+                                               styleClass="form-field" />
+
+                                    <Label styleClass="field-label" text="Password">
+                                        <VBox.margin><Insets bottom="6.0" top="16.0" /></VBox.margin>
+                                    </Label>
+                                    <StackPane>
+                                        <TextField fx:id="visiblePasswordField"
+                                                   managed="false" styleClass="form-field"
+                                                   visible="false" />
+                                        <PasswordField fx:id="passwordField"
+                                                       promptText="Enter your password"
+                                                       styleClass="form-field" />
+                                        <FontAwesomeIconView fx:id="eyeIcon" fill="#16B0A6"
+                                                             glyphName="EYE"
+                                                             onMouseClicked="#handleShowPassword"
+                                                             size="14" wrappingWidth="14.0"
+                                                             StackPane.alignment="CENTER_RIGHT">
+                                            <StackPane.margin><Insets right="12.0" /></StackPane.margin>
+                                        </FontAwesomeIconView>
+                                    </StackPane>
+
+                                    <Label styleClass="forgot-link" text="Forgot password?">
+                                        <VBox.margin><Insets top="10.0" /></VBox.margin>
+                                    </Label>
+
+                                    <Button fx:id="continueBtn" maxWidth="Infinity"
+                                            mnemonicParsing="false" onAction="#handleLogin"
+                                            styleClass="primary-btn" text="Log in">
+                                        <VBox.margin><Insets top="22.0" /></VBox.margin>
+                                    </Button>
+
+                                    <HBox alignment="CENTER" spacing="6.0">
+                                        <VBox.margin><Insets top="20.0" /></VBox.margin>
+                                        <Label styleClass="muted-label" text="New customer?" />
+                                        <Label onMouseClicked="#switchToSignUpTab"
+                                               styleClass="link-label" text="Create an account" />
+                                    </HBox>
+                                </VBox>
+                            </content>
+                        </Tab>
+
+                        <!-- ===== SELF-REGISTER (customers only) ===== -->
+                        <Tab fx:id="signUpTab" text="Sign up">
+                            <content>
+                                <VBox styleClass="form-container">
+                                    <padding><Insets top="20.0" /></padding>
+
+                                    <Label styleClass="auth-title" text="Create your account" />
+                                    <Label styleClass="auth-subtitle"
+                                           text="Customers can self-register to request tests and view results." />
+
+                                    <HBox spacing="12.0">
+                                        <VBox.margin><Insets top="18.0" /></VBox.margin>
+                                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                            <Label styleClass="field-label" text="First name" />
+                                            <TextField fx:id="firstNameField" maxWidth="Infinity"
+                                                       promptText="First name" styleClass="form-field" />
+                                        </VBox>
+                                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                            <Label styleClass="field-label" text="Last name" />
+                                            <TextField fx:id="lastNameField" maxWidth="Infinity"
+                                                       promptText="Last name" styleClass="form-field" />
+                                        </VBox>
+                                    </HBox>
+
+                                    <Label styleClass="field-label" text="Email">
+                                        <VBox.margin><Insets bottom="6.0" top="14.0" /></VBox.margin>
+                                    </Label>
+                                    <TextField fx:id="signUpEmailField"
+                                               promptText="you@example.com"
+                                               styleClass="form-field" />
+
+                                    <HBox spacing="12.0">
+                                        <VBox.margin><Insets top="14.0" /></VBox.margin>
+                                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                            <Label styleClass="field-label" text="Password" />
+                                            <StackPane>
+                                                <TextField fx:id="signUpVisiblePasswordField"
+                                                           managed="false" maxWidth="Infinity"
+                                                           styleClass="form-field" visible="false" />
+                                                <PasswordField fx:id="signUpPasswordField"
+                                                               maxWidth="Infinity"
+                                                               promptText="Create password"
+                                                               styleClass="form-field" />
+                                                <FontAwesomeIconView fx:id="signUpEyeIcon"
+                                                                     fill="#16B0A6" glyphName="EYE"
+                                                                     onMouseClicked="#handleSignUpShowPassword"
+                                                                     size="13"
+                                                                     StackPane.alignment="CENTER_RIGHT">
+                                                    <StackPane.margin><Insets right="12.0" /></StackPane.margin>
+                                                </FontAwesomeIconView>
+                                            </StackPane>
+                                        </VBox>
+                                        <VBox spacing="6.0" HBox.hgrow="ALWAYS">
+                                            <Label styleClass="field-label" text="Confirm" />
+                                            <StackPane>
+                                                <TextField fx:id="signUpVisibleConfirmPasswordField"
+                                                           managed="false" maxWidth="Infinity"
+                                                           styleClass="form-field" visible="false" />
+                                                <PasswordField fx:id="signUpConfirmPasswordField"
+                                                               maxWidth="Infinity"
+                                                               promptText="Repeat password"
+                                                               styleClass="form-field" />
+                                                <FontAwesomeIconView fx:id="signUpConfirmEyeIcon"
+                                                                     fill="#16B0A6" glyphName="EYE"
+                                                                     onMouseClicked="#handleSignUpShowConfirmPassword"
+                                                                     size="13"
+                                                                     StackPane.alignment="CENTER_RIGHT">
+                                                    <StackPane.margin><Insets right="12.0" /></StackPane.margin>
+                                                </FontAwesomeIconView>
+                                            </StackPane>
+                                        </VBox>
+                                    </HBox>
+
+                                    <Label fx:id="passwordErrorLabel" styleClass="error-text">
+                                        <VBox.margin><Insets top="8.0" /></VBox.margin>
+                                    </Label>
+
+                                    <Button fx:id="submitBtn" maxWidth="Infinity"
+                                            mnemonicParsing="false" onAction="#handleSignUp"
+                                            styleClass="primary-btn" text="Create account">
+                                        <VBox.margin><Insets top="10.0" /></VBox.margin>
+                                    </Button>
+
+                                    <HBox alignment="CENTER" spacing="6.0">
+                                        <VBox.margin><Insets top="16.0" /></VBox.margin>
+                                        <Label styleClass="muted-label" text="Already registered?" />
+                                        <Label onMouseClicked="#switchToLoginTab"
+                                               styleClass="link-label" text="Log in" />
+                                    </HBox>
+                                </VBox>
+                            </content>
+                        </Tab>
+                    </tabs>
+                </TabPane>
+            </GridPane>
+
+            <!-- loading overlay -->
+            <StackPane fx:id="overlayPane"
+                       style="-fx-background-color: rgba(14,58,63,0.32);" visible="false">
+                <ProgressIndicator prefHeight="56.0" prefWidth="56.0" />
+            </StackPane>
+
+            <!-- custom error popup -->
+            <StackPane fx:id="errorPopup"
+                       style="-fx-background-color: rgba(14,58,63,0.40);"
+                       visible="false" managed="false">
+                <VBox alignment="CENTER" maxWidth="320.0"
+                      styleClass="confirm-card" spacing="0">
+                    <StackPane styleClass="confirm-icon-circle"
+                               style="-fx-background-color: #FDE8E8;">
+                        <Label text="✕" styleClass="confirm-icon-mark"
+                               style="-fx-text-fill: #E5484D;"/>
+                    </StackPane>
+                    <Label fx:id="errorPopupTitle" styleClass="confirm-title" text="Login Failed">
+                        <VBox.margin><Insets top="14.0" bottom="6.0"/></VBox.margin>
+                    </Label>
+                    <Label fx:id="errorPopupMessage" styleClass="confirm-message"
+                           wrapText="true" maxWidth="260.0" textAlignment="CENTER">
+                        <VBox.margin><Insets bottom="22.0"/></VBox.margin>
+                    </Label>
+                    <Button text="OK" onAction="#handleDismissError"
+                            styleClass="primary-btn" prefWidth="140.0"/>
+                </VBox>
+            </StackPane>
+
+        </StackPane>
+    </center>
+</BorderPane>

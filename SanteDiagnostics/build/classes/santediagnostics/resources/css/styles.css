@@ -1,0 +1,810 @@
+/* =====================================================================
+   Sante Diagnostics LIMS - stylesheet
+   Palette:
+     Brand deep teal   #0E3A3F   (panel base)
+     Brand teal        #12565C   (panel gradient end)
+     Lab cyan accent   #16B0A6   (primary actions, active state)
+     Cyan hover        #11968D
+     Ink / text        #11242A
+     Muted text        #6B7E84
+     Field border      #D4DEDE
+     Surface           #FFFFFF
+     Canvas            #F4F8F8
+     Danger            #E5484D
+   ===================================================================== */
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", "Arial", sans-serif;
+    -fx-background-color: #F4F8F8;
+}
+
+
+.brand-panel {
+    -fx-background-color: linear-gradient(to bottom right, #0E3A3F, #12565C);
+    -fx-padding: 40;
+}
+
+.brand-logo {
+    -fx-font-size: 46px;
+    -fx-text-fill: #16B0A6;
+}
+
+.brand-name {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+    -fx-padding: 10 0 0 0;
+}
+
+.brand-sub {
+    -fx-font-size: 13px;
+    -fx-text-fill: rgba(255,255,255,0.72);
+    -fx-padding: 6 0 0 0;
+    -fx-wrap-text: true;
+    -fx-text-alignment: center;
+}
+
+.brand-pill {
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-background-radius: 20;
+    -fx-padding: 6 14 6 14;
+    -fx-text-fill: rgba(255,255,255,0.85);
+    -fx-font-size: 11px;
+}
+
+/* form surface */
+
+.form-surface {
+    -fx-background-color: white;
+}
+
+.form-container {
+    -fx-padding: 10 36 30 36;
+    -fx-spacing: 2;
+}
+
+.auth-title {
+    -fx-font-size: 22px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.auth-subtitle {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B7E84;
+    -fx-wrap-text: true;
+}
+
+.field-label {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.form-field {
+    -fx-background-color: #FBFDFD;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.4;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-padding: 10 12 10 12;
+    -fx-font-size: 13.5px;
+    -fx-prompt-text-fill: #9CACB0;
+}
+
+.form-field:focused {
+    -fx-border-color: #16B0A6;
+    -fx-background-color: white;
+}
+
+.field-error {
+    -fx-border-color: #E5484D;
+}
+
+/* buttons */
+
+.primary-btn {
+    -fx-background-color: #16B0A6;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9;
+    -fx-cursor: hand;
+    -fx-padding: 11 0 11 0;
+}
+
+.primary-btn:hover {
+    -fx-background-color: #11968D;
+}
+
+.primary-btn:disabled {
+    -fx-background-color: #B7D7D4;
+    -fx-text-fill: rgba(255,255,255,0.85);
+}
+
+.ghost-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.4;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+    -fx-text-fill: #11242A;
+    -fx-font-size: 13px;
+    -fx-cursor: hand;
+    -fx-padding: 10 0 10 0;
+}
+
+.ghost-btn:hover {
+    -fx-border-color: #16B0A6;
+    -fx-text-fill: #11968D;
+}
+
+/* auth misc */
+
+.muted-label {
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 12.5px;
+}
+
+.link-label {
+    -fx-text-fill: #16B0A6;
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.link-label:hover {
+    -fx-underline: true;
+}
+
+.forgot-link {
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 12px;
+    -fx-cursor: hand;
+}
+
+.forgot-link:hover {
+    -fx-text-fill: #16B0A6;
+}
+
+.error-text {
+    -fx-text-fill: #E5484D;
+    -fx-font-size: 12px;
+}
+
+/*tab pane */
+
+.auth-tab-pane .tab-header-area .tab-header-background {
+    -fx-background-color: transparent;
+}
+
+.auth-tab-pane .tab {
+    -fx-background-color: transparent;
+    -fx-padding: 6 14 6 14;
+}
+
+.auth-tab-pane .tab .tab-label {
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+.auth-tab-pane .tab:selected .tab-label {
+    -fx-text-fill: #0E3A3F;
+}
+
+.auth-tab-pane .tab:selected {
+    -fx-border-color: transparent transparent #16B0A6 transparent;
+    -fx-border-width: 0 0 2.5 0;
+}
+
+.auth-tab-pane .tab-header-area {
+    -fx-padding: 0 0 0 18;
+}
+
+/* progress */
+
+.helper-card {
+    -fx-background-color: #ECF6F5;
+    -fx-background-radius: 9;
+    -fx-padding: 12 14 12 14;
+}
+
+.helper-card .helper-title {
+    -fx-text-fill: #0E3A3F;
+    -fx-font-weight: bold;
+    -fx-font-size: 12px;
+}
+
+.helper-card .helper-text {
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 11.5px;
+    -fx-wrap-text: true;
+}
+
+/* =====================================================================
+   APP SHELL  (main-layout.fxml)  - sidebar, topbar, content frame
+   Reuses the same palette as the auth screens.
+   ===================================================================== */
+
+.app-root {
+    -fx-background-color: #F4F8F8;
+}
+
+/* ---------- Sidebar ---------- */
+
+.sidebar {
+    -fx-background-color: linear-gradient(to bottom, #0E3A3F, #12565C);
+}
+
+.sidebar-brand {
+    -fx-padding: 22 20 16 20;
+}
+
+.sidebar-logo {
+    -fx-font-size: 30px;
+    -fx-text-fill: #16B0A6;
+}
+
+.sidebar-brand-name {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: white;
+}
+
+.sidebar-brand-sub {
+    -fx-font-size: 11px;
+    -fx-text-fill: rgba(255,255,255,0.55);
+    -fx-letter-spacing: 2;
+}
+
+.sidebar-section-label {
+    -fx-font-size: 10.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: rgba(255,255,255,0.45);
+}
+
+/* ---------- Nav items ---------- */
+
+.nav-item {
+    -fx-background-color: transparent;
+    -fx-text-fill: rgba(255,255,255,0.78);
+    -fx-font-size: 13.5px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 9;
+    -fx-padding: 11 14 11 16;
+    -fx-cursor: hand;
+    -fx-graphic-text-gap: 14;
+}
+
+.nav-item .glyph-icon,
+.nav-item .text {
+    -fx-fill: rgba(255,255,255,0.78);
+}
+
+.nav-item:hover {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: white;
+}
+
+.nav-item:hover .glyph-icon {
+    -fx-fill: white;
+}
+
+/* active page - controller adds the "nav-active" class */
+.nav-active {
+    -fx-background-color: #16B0A6;
+    -fx-text-fill: white;
+}
+
+.nav-active .glyph-icon {
+    -fx-fill: white;
+}
+
+.nav-active:hover {
+    -fx-background-color: #11968D;
+}
+
+.nav-logout {
+    -fx-text-fill: rgba(255,255,255,0.65);
+}
+
+.nav-logout:hover {
+    -fx-background-color: rgba(229,72,77,0.18);
+    -fx-text-fill: #FF8A8E;
+}
+
+.nav-logout:hover .glyph-icon {
+    -fx-fill: #FF8A8E;
+}
+
+.sidebar-footer {
+    -fx-border-color: rgba(255,255,255,0.08) transparent transparent transparent;
+    -fx-border-width: 1 0 0 0;
+}
+
+/* ---------- Content frame ---------- */
+
+.content-frame {
+    -fx-background-color: #F4F8F8;
+}
+
+/* ---------- Topbar ---------- */
+
+.topbar {
+    -fx-background-color: white;
+    -fx-padding: 16 28 16 28;
+    -fx-border-color: transparent transparent #E4EDED transparent;
+    -fx-border-width: 0 0 1 0;
+}
+
+.topbar-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.topbar-subtitle {
+    -fx-font-size: 12.5px;
+    -fx-text-fill: #6B7E84;
+}
+
+/* ---------- User chip ---------- */
+
+.user-chip-name {
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.user-chip-role {
+    -fx-font-size: 11px;
+    -fx-text-fill: #6B7E84;
+}
+
+.user-avatar {
+    -fx-background-color: #0E3A3F;
+    -fx-background-radius: 50;
+    -fx-min-width: 40;
+    -fx-min-height: 40;
+    -fx-max-width: 40;
+    -fx-max-height: 40;
+}
+
+.user-avatar-text {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- Content area ---------- */
+
+.content-area {
+    -fx-padding: 24 28 24 28;
+}
+
+/* =====================================================================
+   DASHBOARD COMPONENTS  — stat cards, tables, pills, banners
+   Shared by all three role dashboards.
+   ===================================================================== */
+
+.dashboard-scroll {
+    -fx-background-color: transparent;
+    -fx-background: transparent;
+}
+
+.dashboard-scroll .viewport {
+    -fx-background-color: transparent;
+}
+
+.dashboard-container {
+    -fx-background-color: transparent;
+}
+
+/* ---------- Welcome banner ---------- */
+
+.welcome-banner {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 22 24 22 24;
+    -fx-border-color: #E4EDED;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.welcome-title {
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.welcome-sub {
+    -fx-font-size: 13px;
+    -fx-text-fill: #6B7E84;
+}
+
+/* ---------- Stat cards ---------- 
+
+.stat-card {
+    -fx-background-color: white;
+    -fx-background-radius: 12;
+    -fx-padding: 20 20 20 20;
+    -fx-border-color: #E4EDED;
+    -fx-border-radius: 12;
+    -fx-border-width: 1;
+}
+
+.stat-card-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #6B7E84;
+}
+
+.stat-card-value {
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.stat-icon-box {
+    -fx-min-width: 42;
+    -fx-min-height: 42;
+    -fx-max-width: 42;
+    -fx-max-height: 42;
+    -fx-background-radius: 10;
+}
+
+.stat-icon-cyan {
+    -fx-background-color: #E6F7F6;
+}
+
+.stat-icon-cyan .glyph-icon {
+    -fx-fill: #16B0A6;
+}
+
+.stat-icon-green {
+    -fx-background-color: #E3F5E1;
+}
+
+.stat-icon-green .glyph-icon {
+    -fx-fill: #3D9A38;
+}
+
+.stat-icon-amber {
+    -fx-background-color: #FFF3E0;
+}
+
+.stat-icon-amber .glyph-icon {
+    -fx-fill: #E68A00;
+}
+*/
+/* ---------- Section headings ---------- */
+
+.section-title {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+/* ---------- Data table ---------- */
+
+.data-table {
+    -fx-background-color: white;
+    -fx-border-color: #E4EDED;
+    -fx-border-radius: 12;
+    -fx-background-radius: 12;
+}
+
+.data-table .column-header-background {
+    -fx-background-color: #F4F8F8;
+    -fx-background-radius: 12 12 0 0;
+}
+
+.data-table .column-header {
+    -fx-background-color: transparent;
+    -fx-border-color: transparent transparent #E4EDED transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 10 14 10 14;
+}
+
+.data-table .column-header .label {
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #6B7E84;
+}
+
+.data-table .table-row-cell {
+    -fx-background-color: white;
+    -fx-border-color: transparent transparent #F0F4F4 transparent;
+    -fx-border-width: 0 0 1 0;
+    -fx-padding: 4 0 4 0;
+}
+
+.data-table .table-row-cell:hover {
+    -fx-background-color: #F9FCFC;
+}
+
+.data-table .table-cell {
+    -fx-font-size: 13px;
+    -fx-text-fill: #11242A;
+    -fx-padding: 8 14 8 14;
+}
+
+/* ---------- Status pills ---------- */
+
+.status-pill {
+    -fx-font-size: 11.5px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 12 4 12;
+    -fx-background-radius: 20;
+}
+
+.pill-paid {
+    -fx-background-color: #E3F5E1;
+    -fx-text-fill: #3D9A38;
+}
+
+.pill-unpaid {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #E68A00;
+}
+
+.pill-collected {
+    -fx-background-color: #E6F7F6;
+    -fx-text-fill: #16B0A6;
+}
+
+.pill-processing {
+    -fx-background-color: #E8EAF6;
+    -fx-text-fill: #5C6BC0;
+}
+
+.pill-validating {
+    -fx-background-color: #FFF3E0;
+    -fx-text-fill: #E68A00;
+}
+
+.pill-pending {
+    -fx-background-color: #F4F8F8;
+    -fx-text-fill: #6B7E84;
+}
+
+.pill-ready {
+    -fx-background-color: #E3F5E1;
+    -fx-text-fill: #3D9A38;
+}
+
+/* ---------- Table action button ---------- */
+
+.table-action-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #16B0A6;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 7;
+    -fx-background-radius: 7;
+    -fx-text-fill: #16B0A6;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-padding: 4 14 4 14;
+    -fx-cursor: hand;
+}
+
+.table-action-btn:hover {
+    -fx-background-color: #16B0A6;
+    -fx-text-fill: white;
+}
+
+/* =====================================================================
+   DASHBOARD CARDS  — 2x2 nav grid (customer dashboard style)
+   ===================================================================== */
+
+.dash-card {
+    -fx-background-radius: 14;
+    -fx-border-radius: 14;
+    -fx-padding: 18 20 18 20;
+    -fx-cursor: hand;
+}
+
+/* Primary card — filled with the brand teal */
+.dash-card-filled {
+    -fx-background-color: #0E3A3F;
+    -fx-border-color: transparent;
+}
+
+.dash-card-filled:hover {
+     -fx-background-color: #12565C;
+}
+/* .dash-card-icon {
+    -fx-fill: white;
+}
+
+.dash-card-label {
+    -fx-text-fill: white;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 0 0 0;
+}
+
+.dash-card-arrow {
+    -fx-fill: rgba(255,255,255,1.0);
+} 
+*/
+/* Secondary cards — white with border */
+.dash-card-outlined {
+    -fx-background-color: white;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.2;
+}
+
+.dash-card-outlined:hover {
+    -fx-background-color: #F9FCFC;
+    -fx-border-color: #16B0A6;
+}
+
+/* Icon + label + arrow — light variant (on filled card) */
+.dash-card-icon-light {
+    -fx-fill: black;
+}
+
+.dash-card-label-light {
+    -fx-text-fill: black;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 0 0 0;
+}
+
+.dash-card-arrow-light {
+    -fx-fill: rgba(255,255,255,0.45);
+}
+
+/* Icon + label + arrow — dark variant (on outlined card) */
+.dash-card-icon-dark {
+    -fx-fill: #11242A;
+}
+
+.dash-card-label-dark {
+    -fx-text-fill: #11242A;
+    -fx-font-size: 15px;
+    -fx-font-weight: bold;
+    -fx-padding: 6 0 0 0;
+}
+
+.dash-card-arrow-dark {
+    -fx-fill: #6B7E84;
+}
+
+/* ---------- Dashboard avatar ---------- */
+
+.dash-avatar {
+    -fx-background-color: #0E3A3F;
+    -fx-background-radius: 50;
+    -fx-min-width: 48;
+    -fx-min-height: 48;
+    -fx-max-width: 48;
+    -fx-max-height: 48;
+}
+
+.dash-avatar-text {
+    -fx-text-fill: white;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+}
+
+/* ---------- Quantity stepper (order popup) ---------- */
+.qty-stepper {
+    -fx-background-color: #FBFDFD;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.4;
+    -fx-border-radius: 9;
+    -fx-background-radius: 9;
+}
+
+.qty-step-btn {
+    -fx-background-color: transparent;
+    -fx-text-fill: #16B0A6;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-min-width: 46;
+    -fx-min-height: 42;
+    -fx-cursor: hand;
+    -fx-background-radius: 9;
+}
+
+.qty-step-btn:hover {
+    -fx-background-color: #ECF6F5;
+}
+
+.qty-step-btn:disabled {
+    -fx-text-fill: #C2D2D2;
+    -fx-cursor: default;
+}
+
+.qty-value {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+    -fx-alignment: center;
+}
+
+/* ---------- Filter chips (request queue) ---------- */
+.filter-bar {
+    -fx-padding: 0;
+}
+
+.filter-chip {
+    -fx-background-color: white;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 20;
+    -fx-background-radius: 20;
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 13px;
+    -fx-padding: 7 18 7 18;
+    -fx-cursor: hand;
+}
+
+.filter-chip:hover {
+    -fx-border-color: #16B0A6;
+}
+
+.filter-chip:selected {
+    -fx-background-color: #16B0A6;
+    -fx-border-color: #16B0A6;
+    -fx-text-fill: white;
+}
+
+.filter-chip:selected:hover {
+    -fx-background-color: #11968D;
+}
+
+/* ---------- Custom confirm popup (request queue) ---------- */
+.confirm-card {
+    -fx-background-color: white;
+    -fx-background-radius: 16;
+    -fx-padding: 30 28 26 28;
+    -fx-effect: dropshadow(gaussian, rgba(14,58,63,0.25), 24, 0, 0, 8);
+}
+
+.confirm-icon-circle {
+    -fx-background-color: #E6F7F6;
+    -fx-background-radius: 50;
+    -fx-min-width: 60;
+    -fx-min-height: 60;
+    -fx-max-width: 60;
+    -fx-max-height: 60;
+}
+
+.confirm-icon-mark {
+    -fx-font-size: 28px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #16B0A6;
+}
+
+.confirm-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.confirm-message {
+    -fx-font-size: 13.5px;
+    -fx-text-fill: #6B7E84;
+    -fx-text-alignment: center;
+}
+
+/* ---------- User management additions ---------- */
+
+.form-label {
+    -fx-font-size: 12.5px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #11242A;
+}
+
+.error-label {
+    -fx-text-fill: #E5484D;
+    -fx-font-size: 12.5px;
+}
+
+.pill-inactive {
+    -fx-background-color: #F4F8F8;
+    -fx-text-fill: #6B7E84;
+}

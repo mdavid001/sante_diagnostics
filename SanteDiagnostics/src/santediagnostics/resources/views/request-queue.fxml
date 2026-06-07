@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    request-queue.fxml
+    Lab Attendant: view incoming test requests and confirm payments.
+    Filter chips (All / Unpaid / Paid) + table. Unpaid rows get a
+    "Confirm Payment" button that calls TestRequestService.markPaid().
+-->
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll"
+            stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="santediagnostics.resources.controllers.RequestQueueController">
+
+    <VBox spacing="20.0" styleClass="dashboard-container">
+        <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0" /></padding>
+
+        <!-- Filter chips + count -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <HBox spacing="8.0" styleClass="filter-bar">
+                <fx:define>
+                    <ToggleGroup fx:id="filterGroup" />
+                </fx:define>
+                <ToggleButton fx:id="filterAll" text="All" selected="true"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterAll" />
+                <ToggleButton fx:id="filterUnpaid" text="Unpaid"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterUnpaid" />
+                <ToggleButton fx:id="filterPaid" text="Paid"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterPaid" />
+            </HBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Label fx:id="countLabel" styleClass="muted-label" text="" />
+            <Button fx:id="refreshBtn" text="Refresh" onAction="#handleRefresh"
+                    styleClass="ghost-btn" />
+        </HBox>
+
+        <!-- Requests table -->
+        <StackPane>
+            <TableView fx:id="requestTable" styleClass="data-table" prefHeight="460.0">
+                <columns>
+                    <TableColumn fx:id="colId" prefWidth="70.0" text="Req #" />
+                    <TableColumn fx:id="colCustomer" prefWidth="170.0" text="Customer" />
+                    <TableColumn fx:id="colTest" prefWidth="180.0" text="Test" />
+                    <TableColumn fx:id="colAmount" prefWidth="120.0" text="Amount" />
+                    <TableColumn fx:id="colPayment" prefWidth="110.0" text="Payment" />
+                    <TableColumn fx:id="colStatus" prefWidth="120.0" text="Status" />
+                    <TableColumn fx:id="colAction" prefWidth="160.0" text="Action" />
+                </columns>
+                <placeholder>
+                    <Label styleClass="muted-label" text="No test requests to show." />
+                </placeholder>
+            </TableView>
+
+            <!-- loading overlay -->
+            <StackPane fx:id="overlayPane" style="-fx-background-color: rgba(244,248,248,0.6);"
+                       visible="false" managed="false">
+                <Label styleClass="muted-label" text="Working..." />
+            </StackPane>
+
+            <!-- custom confirm-payment popup -->
+            <StackPane fx:id="confirmPopup" style="-fx-background-color: rgba(14,58,63,0.32);"
+                       visible="false" managed="false">
+                <VBox alignment="CENTER" maxWidth="380.0" maxHeight="260.0"
+                      fillWidth = "true"
+                      styleClass="confirm-card">
+                    <StackPane styleClass="confirm-icon-circle">
+                        <Label styleClass="confirm-icon-mark" text="&#8358;" />
+                    </StackPane>
+                    <Label styleClass="confirm-title" text="Confirm Payment">
+                        <VBox.margin><Insets top="14.0" /></VBox.margin>
+                    </Label>
+                    <Label fx:id="confirmMessage" styleClass="confirm-message" wrapText="true"
+                           textAlignment="CENTER"
+                           text="">
+                        <VBox.margin><Insets top="8.0" left="10.0" right="10.0" /></VBox.margin>
+                    </Label>
+                    <HBox alignment="CENTER" spacing="12.0">
+                        <VBox.margin><Insets top="24.0" /></VBox.margin>
+                        <Button text="Cancel" onAction="#handleCancelConfirm"
+                                styleClass="ghost-btn" prefWidth="130.0" />
+                        <Button text="Yes, confirm" onAction="#handleAcceptConfirm"
+                                styleClass="primary-btn" prefWidth="130.0" />
+                    </HBox>
+                </VBox>
+            </StackPane>
+        </StackPane>
+
+    </VBox>
+</ScrollPane>

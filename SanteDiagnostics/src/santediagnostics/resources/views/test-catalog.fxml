@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    test-catalog.fxml
+    Card grid of available tests. Click a card to order.
+    Popups for: order details → bank details → confirmation.
+-->
+<StackPane stylesheets="@../css/styles.css"
+           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="santediagnostics.resources.controllers.TestCatalogController">
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll">
+        <VBox spacing="20.0" styleClass="dashboard-container">
+            <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0" /></padding>
+
+            <!-- Header + Search -->
+            <VBox spacing="14.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #E4EDED; -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 20 24 20 24;">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <FontAwesomeIconView fill="#16B0A6" glyphName="FLASK" size="22" />
+                    <VBox spacing="2.0">
+                        <Label text="Browse Tests" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                        <Label text="Select a test to place an order" styleClass="muted-label" />
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="testCountLabel" text="0 tests" styleClass="muted-label" />
+                </HBox>
+                <TextField fx:id="searchField" promptText="Search tests by name..."
+                           styleClass="form-field" />
+            </VBox>
+
+            <!-- Test Cards Grid -->
+            <VBox fx:id="testCardsPane" spacing="12.0" />
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- ==================== POPUP 1: ORDER DETAILS ==================== -->
+    <StackPane fx:id="orderPopup" visible="false" managed="false"
+               style="-fx-background-color: rgba(17,36,42,0.55);">
+        <VBox alignment="CENTER" maxWidth="400.0" maxHeight="380.0" spacing="18.0"
+              style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 28 32 28 32; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);">
+
+            <!-- Close -->
+            <HBox alignment="CENTER_RIGHT">
+                <Button text="✕" onAction="#handleCloseOrderPopup"
+                        style="-fx-background-color: transparent; -fx-font-size: 16px; -fx-text-fill: #6B7E84; -fx-cursor: hand;" />
+            </HBox>
+
+            <!-- Test info -->
+            <VBox alignment="CENTER" spacing="6.0">
+                <FontAwesomeIconView fill="#16B0A6" glyphName="FLASK" size="32" />
+                <Label fx:id="popupTestName" text="Test Name"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                <Label fx:id="popupTestPrice" text="₦0.00"
+                       style="-fx-font-size: 15px; -fx-text-fill: #16B0A6; -fx-font-weight: bold;" />
+            </VBox>
+
+            <!-- Quantity -->
+            <VBox spacing="6.0">
+                <Label text="Quantity" styleClass="field-label" />
+                <HBox alignment="CENTER" spacing="0.0" styleClass="qty-stepper" maxWidth="Infinity">
+                    <Button fx:id="qtyMinusBtn" text="&#8722;" onAction="#handleQtyMinus"
+                            styleClass="qty-step-btn" />
+                    <Label fx:id="qtyValueLabel" text="1" styleClass="qty-value"
+                           maxWidth="Infinity" HBox.hgrow="ALWAYS" />
+                    <Button fx:id="qtyPlusBtn" text="+" onAction="#handleQtyPlus"
+                            styleClass="qty-step-btn" />
+                </HBox>
+            </VBox>
+
+            <!-- Total -->
+            <HBox alignment="CENTER_LEFT" spacing="8.0"
+                  style="-fx-background-color: #F4F8F8; -fx-background-radius: 8; -fx-padding: 12 16 12 16;">
+                <Label text="Total:" style="-fx-font-size: 14px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="popupTotalLabel" text="₦0.00"
+                       style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #16B0A6;" />
+            </HBox>
+
+            <!-- Order button -->
+            <Button text="Place Order" onAction="#handlePlaceOrder"
+                    styleClass="primary-btn" maxWidth="Infinity">
+                <padding><Insets top="12" right="0" bottom="12" left="0" /></padding>
+            </Button>
+        </VBox>
+    </StackPane>
+
+    <!-- ==================== POPUP 2: BANK DETAILS ==================== -->
+    <StackPane fx:id="bankPopup" visible="false" managed="false"
+               style="-fx-background-color: rgba(17,36,42,0.55);">
+        <VBox alignment="CENTER" maxWidth="400.0" maxHeight="400.0" spacing="16.0"
+              style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 28 32 28 32; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);">
+
+            <FontAwesomeIconView fill="#16B0A6" glyphName="BANK" size="32" />
+            <Label text="Payment Details"
+                   style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+            <Label text="Transfer the amount below and click confirm."
+                   style="-fx-font-size: 13px; -fx-text-fill: #6B7E84; -fx-text-alignment: center; -fx-wrap-text: true;" />
+
+            <!-- Bank details card -->
+            <VBox spacing="10.0"
+                  style="-fx-background-color: #F4F8F8; -fx-background-radius: 10; -fx-padding: 18 22 18 22;">
+                <HBox spacing="8.0">
+                    <Label text="Bank:" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #6B7E84;" />
+                    <Label fx:id="bankNameLabel" text="—" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                </HBox>
+                <HBox spacing="8.0">
+                    <Label text="Account Name:" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #6B7E84;" />
+                    <Label fx:id="accountNameLabel" text="—" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                </HBox>
+                <HBox spacing="8.0">
+                    <Label text="Account Number:" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #6B7E84;" />
+                    <Label fx:id="accountNumberLabel" text="—" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                </HBox>
+                <HBox spacing="8.0">
+                    <Label text="Amount:" style="-fx-font-size: 13px; -fx-font-weight: bold; -fx-text-fill: #6B7E84;" />
+                    <Label fx:id="bankAmountLabel" text="₦0.00"
+                           style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #16B0A6;" />
+                </HBox>
+            </VBox>
+
+            <!-- Confirm payment button -->
+            <Button text="I've Sent the Money" onAction="#handlePaymentConfirmed"
+                    styleClass="primary-btn" maxWidth="Infinity">
+                <padding><Insets top="12" right="0" bottom="12" left="0" /></padding>
+            </Button>
+        </VBox>
+    </StackPane>
+
+    <!-- ==================== POPUP 3: SUCCESS ==================== -->
+    <StackPane fx:id="successPopup" visible="false" managed="false"
+               style="-fx-background-color: rgba(17,36,42,0.55);">
+        <VBox alignment="CENTER" maxWidth="340.0" maxHeight="260.0" spacing="16.0"
+              style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 32 32 28 32; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);">
+
+            <FontAwesomeIconView fill="#3D9A38" glyphName="CHECK_CIRCLE" size="48" />
+            <Label text="Order Placed!"
+                   style="-fx-font-size: 20px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+            <Label text="Your test will begin once payment is confirmed by the lab."
+                   style="-fx-font-size: 13px; -fx-text-fill: #6B7E84; -fx-text-alignment: center; -fx-wrap-text: true;" />
+
+            <Button text="Back to Tests" onAction="#handleBackToTests"
+                    styleClass="primary-btn" maxWidth="Infinity">
+                <padding><Insets top="12" right="0" bottom="12" left="0" /></padding>
+            </Button>
+        </VBox>
+    </StackPane>
+
+</StackPane>
