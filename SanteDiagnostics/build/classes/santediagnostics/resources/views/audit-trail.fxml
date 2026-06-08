@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    audit-trail.fxml  (Super Admin)
+    Read-only view of the immutable audit log. Entries cannot be edited or
+    deleted from here (or anywhere) — the database itself blocks updates and
+    deletes on the audit_log table.
+-->
+<ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="dashboard-scroll"
+            stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="santediagnostics.resources.controllers.AuditTrailController">
+
+    <VBox spacing="20.0" styleClass="dashboard-container">
+        <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0" /></padding>
+
+        <!-- Header -->
+        <VBox spacing="14.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #E4EDED; -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 20 24 20 24;">
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <FontAwesomeIconView fill="#16B0A6" glyphName="HISTORY" size="22" />
+                <VBox spacing="2.0">
+                    <Label text="Audit Trail" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                    <Label text="Immutable record of all actions — cannot be edited or deleted"
+                           styleClass="muted-label" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="countLabel" text="0 entries" styleClass="muted-label" />
+            </HBox>
+            <TextField fx:id="searchField" promptText="Search by user, action, or entity…"
+                       styleClass="form-field" onKeyReleased="#handleSearch" />
+        </VBox>
+
+        <!-- Category filter chips -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <HBox spacing="8.0">
+                <fx:define>
+                    <ToggleGroup fx:id="filterGroup" />
+                </fx:define>
+                <ToggleButton fx:id="filterAll" text="All" selected="true"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterAll" />
+                <ToggleButton fx:id="filterTests" text="Tests"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterTests" />
+                <ToggleButton fx:id="filterRequests" text="Requests"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterRequests" />
+                <ToggleButton fx:id="filterSamples" text="Samples"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterSamples" />
+                <ToggleButton fx:id="filterResults" text="Results"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterResults" />
+            </HBox>
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="refreshBtn" text="Refresh" onAction="#handleRefresh"
+                    styleClass="ghost-btn" />
+        </HBox>
+
+        <!-- Log table -->
+        <StackPane>
+            <TableView fx:id="auditTable" styleClass="data-table" prefHeight="500.0"
+                       minWidth="940.0">
+                <columns>
+                    <TableColumn fx:id="colTime" prefWidth="170.0" text="When" />
+                    <TableColumn fx:id="colActor" prefWidth="170.0" text="User" />
+                    <TableColumn fx:id="colAction" prefWidth="180.0" text="Action" />
+                    <TableColumn fx:id="colEntity" prefWidth="160.0" text="Entity" />
+                    <TableColumn fx:id="colDetails" prefWidth="240.0" text="Details" />
+                </columns>
+                <placeholder>
+                    <Label styleClass="muted-label" text="No audit entries yet." />
+                </placeholder>
+            </TableView>
+
+            <StackPane fx:id="overlayPane" style="-fx-background-color: rgba(244,248,248,0.6);"
+                       visible="false" managed="false">
+                <Label styleClass="muted-label" text="Loading..." />
+            </StackPane>
+        </StackPane>
+
+    </VBox>
+</ScrollPane>
