@@ -423,7 +423,7 @@
     -fx-text-fill: #6B7E84;
 }
 
-/* ---------- Stat cards ---------- 
+/* ---------- Stat cards ---------- */
 
 .stat-card {
     -fx-background-color: white;
@@ -476,7 +476,7 @@
 .stat-icon-amber .glyph-icon {
     -fx-fill: #E68A00;
 }
-*/
+
 /* ---------- Section headings ---------- */
 
 .section-title {
