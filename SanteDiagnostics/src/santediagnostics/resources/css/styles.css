@@ -808,3 +808,219 @@
     -fx-background-color: #F4F8F8;
     -fx-text-fill: #6B7E84;
 }
+
+/* ==================== ENHANCED TABLE ACTION BUTTONS ==================== */
+/* Forward action button (Collect, Start Processing, Mark Processed) */
+.table-action-btn {
+    -fx-background-color: #16B0A6;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-padding: 6 16 6 16;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.2), 3, 0, 0, 1);
+}
+
+.table-action-btn:hover {
+    -fx-background-color: #11968D;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.3), 5, 0, 0, 2);
+}
+
+.table-action-btn:pressed {
+    -fx-background-color: #0E7A72;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.1), 2, 0, 0, 0);
+}
+
+/* Back button - style matches your ghost-btn but more compact */
+.back-action-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 11px;
+    -fx-font-weight: 500;
+    -fx-padding: 6 14 6 14;
+    -fx-cursor: hand;
+}
+
+.back-action-btn:hover {
+    -fx-border-color: #16B0A6;
+    -fx-text-fill: #16B0A6;
+    -fx-background-color: rgba(22, 176, 166, 0.05);
+}
+
+.back-action-btn:pressed {
+    -fx-background-color: rgba(22, 176, 166, 0.1);
+}
+
+/* Different colors for different action types (optional, more intuitive) */
+.action-btn-collect {
+    -fx-background-color: #0E3A3F;  /* Brand teal for collect */
+}
+
+.action-btn-process {
+    -fx-background-color: #2E7D32;  /* Green for start processing */
+}
+
+.action-btn-complete {
+    -fx-background-color: #F57C00;  /* Orange for mark processed */
+}
+
+/* Disabled state */
+.table-action-btn:disabled {
+    -fx-background-color: #C2D2D2;
+    -fx-effect: null;
+    -fx-cursor: default;
+}
+
+/* ==================== ENHANCED TABLE ACTION BUTTONS ==================== */
+/* Forward action button (Enter result, Verify) */
+.table-action-btn {
+    -fx-background-color: #16B0A6;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-padding: 6 16 6 16;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.2), 3, 0, 0, 1);
+}
+
+.table-action-btn:hover {
+    -fx-background-color: #11968D;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.3), 5, 0, 0, 2);
+}
+
+.table-action-btn:pressed {
+    -fx-background-color: #0E7A72;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.1), 2, 0, 0, 0);
+}
+
+/* Back/Edit action button (secondary actions) */
+.back-action-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-padding: 6 14 6 14;
+    -fx-cursor: hand;
+}
+
+.back-action-btn:hover {
+    -fx-border-color: #16B0A6;
+    -fx-text-fill: #16B0A6;
+    -fx-background-color: rgba(22, 176, 166, 0.05);
+}
+
+.back-action-btn:pressed {
+    -fx-background-color: rgba(22, 176, 166, 0.1);
+}
+
+/* Disabled button state */
+.table-action-btn:disabled {
+    -fx-background-color: #C2D2D2;
+    -fx-effect: null;
+    -fx-cursor: default;
+}
+
+/* Success message style for file indicator */
+.file-current {
+    -fx-text-fill: #2E7D32;
+}
+
+.file-new {
+    -fx-text-fill: #16B0A6;
+}
+
+/* ==================== ENHANCED TABLE ACTION BUTTONS ==================== */
+/* Forward action button (Enter result, Verify) */
+.table-action-btn {
+    -fx-background-color: #16B0A6;
+    -fx-border-color: transparent;
+    -fx-border-width: 0;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: white;
+    -fx-font-size: 12px;
+    -fx-font-weight: 600;
+    -fx-padding: 6 16 6 16;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.2), 3, 0, 0, 1);
+}
+
+.table-action-btn:hover {
+    -fx-background-color: #11968D;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.3), 5, 0, 0, 2);
+}
+
+.table-action-btn:pressed {
+    -fx-background-color: #0E7A72;
+    -fx-effect: dropshadow(gaussian, rgba(22, 176, 166, 0.1), 2, 0, 0, 0);
+}
+
+/* Back/Edit action button (secondary actions) */
+.back-action-btn {
+    -fx-background-color: transparent;
+    -fx-border-color: #D4DEDE;
+    -fx-border-width: 1.2;
+    -fx-border-radius: 8;
+    -fx-background-radius: 8;
+    -fx-text-fill: #6B7E84;
+    -fx-font-size: 12px;
+    -fx-font-weight: 500;
+    -fx-padding: 6 14 6 14;
+    -fx-cursor: hand;
+}
+
+.back-action-btn:hover {
+    -fx-border-color: #16B0A6;
+    -fx-text-fill: #16B0A6;
+    -fx-background-color: rgba(22, 176, 166, 0.05);
+}
+
+.back-action-btn:pressed {
+    -fx-background-color: rgba(22, 176, 166, 0.1);
+}
+
+/* Back icon button (circular) */
+.back-icon-button {
+    -fx-background-color: #F0F4F4;
+    -fx-background-radius: 24;
+    -fx-min-width: 36;
+    -fx-min-height: 36;
+    -fx-max-width: 36;
+    -fx-max-height: 36;
+    -fx-cursor: hand;
+}
+
+.back-icon-button:hover {
+    -fx-background-color: #E0E8E8;
+}
+
+.back-icon-button:pressed {
+    -fx-background-color: #D0DCDC;
+}
+
+/* File attachment indicator */
+.file-attachment {
+    -fx-text-fill: #16B0A6;
+    -fx-font-size: 11px;
+}
+
+.file-attachment-multiple {
+    -fx-text-fill: #F57C00;
+    -fx-font-size: 11px;
+}

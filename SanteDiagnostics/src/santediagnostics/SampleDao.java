@@ -69,6 +69,22 @@ public class SampleDao {
         return runUpdate(sql, sampleId);
     }
 
+    /** Reverts a processed sample back to processing. Clears processed_at. */
+    public boolean revertToProcessing(int sampleId) throws SQLException {
+        String sql = "UPDATE samples "
+                + "SET status = 'processing', processed_at = NULL "
+                + "WHERE id = ? AND status = 'processed'";
+        return runUpdate(sql, sampleId);
+    }
+
+    /** Reverts a processing sample back to collected. Clears processing_started_at. */
+    public boolean revertToCollected(int sampleId) throws SQLException {
+        String sql = "UPDATE samples "
+                + "SET status = 'collected', processing_started_at = NULL "
+                + "WHERE id = ? AND status = 'processing'";
+        return runUpdate(sql, sampleId);
+    }
+
     public Sample findById(int id) throws SQLException {
         return querySingle(SELECT_BASE + "WHERE s.id = ?", id);
     }

@@ -79,6 +79,26 @@ public class SampleService {
         return ok;
     }
 
+    /** Moves a processed sample one step back to processing. False if not 'processed'. */
+    public boolean revertToProcessing(int sampleId, int staffUserId) throws SQLException {
+        boolean ok = dao.revertToProcessing(sampleId);
+        if (ok) {
+            audit.log(staffUserId, AuditService.PROCESSING_STARTED,
+                    AuditService.ENTITY_SAMPLE, sampleId);
+        }
+        return ok;
+    }
+
+    /** Moves a processing sample one step back to collected. False if not 'processing'. */
+    public boolean revertToCollected(int sampleId, int staffUserId) throws SQLException {
+        boolean ok = dao.revertToCollected(sampleId);
+        if (ok) {
+            audit.log(staffUserId, AuditService.SAMPLE_COLLECTED,
+                    AuditService.ENTITY_SAMPLE, sampleId);
+        }
+        return ok;
+    }
+
     public Sample getSample(int sampleId) throws SQLException {
         return dao.findById(sampleId);
     }

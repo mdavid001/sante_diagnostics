@@ -24,7 +24,9 @@ public class ResultDao {
             + "       res.status, res.uploaded_by, res.uploaded_at, "
             + "       res.verified_by, res.verified_at, "
             + "       (u.first_name || ' ' || u.last_name) AS customer_name, "
-            + "       t.name AS test_name, t.result_format "
+            + "       t.name AS test_name, t.result_format, "
+            + "       (SELECT COUNT(*) FROM result_files rf WHERE rf.result_id = res.id) AS file_count, "
+            + "       (SELECT rf.original_filename FROM result_files rf WHERE rf.result_id = res.id ORDER BY rf.uploaded_at LIMIT 1) AS first_filename "
             + "FROM results res "
             + "JOIN test_requests r ON r.id = res.test_request_id "
             + "JOIN users u ON u.id = r.customer_id "
@@ -184,6 +186,12 @@ public class ResultDao {
         res.setCustomerName(rs.getString("customer_name"));
         res.setTestName(rs.getString("test_name"));
         res.setResultFormat(rs.getString("result_format"));
+        
+        // NEW: Add file info
+        int fileCount = rs.getInt("file_count");
+        res.setFileCount(fileCount);
+        res.setFirstFileName(rs.getString("first_filename"));
+        
         return res;
     }
 }

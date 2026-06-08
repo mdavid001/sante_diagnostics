@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="santediagnostics.resources.controllers.AttendantDashboardController">
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll" stylesheets="@../css/styles.css" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="santediagnostics.resources.controllers.AttendantDashboardController">
 
     <VBox spacing="24.0" styleClass="dashboard-container">
         <padding><Insets bottom="20.0" left="4.0" right="4.0" top="4.0" /></padding>
@@ -129,7 +129,7 @@
                 <children>
                     <VBox alignment="BOTTOM_LEFT" GridPane.rowIndex="1">
                         <padding><Insets left="20.0" /></padding>
-                        <FontAwesomeIconView fill="#11242A" glyphName="FLASK" size="25">
+                        <FontAwesomeIconView fill="#11242A" glyphName="HEARTBEAT" size="25">
                             <VBox.margin><Insets bottom="5.0" /></VBox.margin>
                         </FontAwesomeIconView>
                         <Label style="-fx-text-fill: #11242A;" text="Sample Tracking" textFill="#11242A">

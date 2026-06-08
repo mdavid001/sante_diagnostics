@@ -29,6 +29,10 @@ public class Result {
     private Timestamp verifiedAt;     // null until verified
 
     private List<ResultFile> files = new ArrayList<>();
+    
+    // NEW: File info fields (populated by queries)
+    private int fileCount = 0;
+    private String firstFileName;
 
     // Display helpers (populated by the join queries; may be null)
     private String customerName;
@@ -40,6 +44,10 @@ public class Result {
 
     public boolean isVerified() {
         return VERIFIED.equals(status);
+    }
+    
+    public boolean hasFile() {
+        return fileCount > 0;
     }
 
     public int getId() {
@@ -120,6 +128,23 @@ public class Result {
 
     public void setFiles(List<ResultFile> files) {
         this.files = (files == null) ? new ArrayList<>() : files;
+    }
+    
+    // NEW: File info getters/setters
+    public int getFileCount() {
+        return fileCount;
+    }
+    
+    public void setFileCount(int fileCount) {
+        this.fileCount = fileCount;
+    }
+    
+    public String getFirstFileName() {
+        return firstFileName;
+    }
+    
+    public void setFirstFileName(String firstFileName) {
+        this.firstFileName = firstFileName;
     }
 
     public String getCustomerName() {
