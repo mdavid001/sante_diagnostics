@@ -4,13 +4,15 @@ import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.beans.property.SimpleStringProperty;
-import javafx.beans.property.StringProperty;
 import javafx.collections.FXCollections;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
@@ -18,9 +20,14 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
-import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.MouseEvent;
+import santediagnostics.Result;
+import santediagnostics.ResultService;
+import santediagnostics.Sample;
+import santediagnostics.SampleService;
 import santediagnostics.Session;
+import santediagnostics.TestRequest;
+import santediagnostics.TestRequestDao;
 import santediagnostics.User;
 
 /**
@@ -30,10 +37,7 @@ import santediagnostics.User;
  *  - Welcome header with user name and avatar initials.
  *  - Four navigation cards (Browse Tests, My Results, Active Tests, Profile).
  *  - Active Tests table with live countdown timers.
- *
- * TODO for teammates:
- *  - Replace placeholder data in loadData() with real DB queries
- *    using Task<> so the UI thread isn't blocked.
+ *  - Past Results table showing completed test results.
  */
 public class CustomerDashboardController implements Initializable {
 
@@ -41,15 +45,31 @@ public class CustomerDashboardController implements Initializable {
     @FXML private Label welcomeLabel;
     @FXML private Label avatarInitials;
 
-    @FXML private TableView<ActiveTest> activeTestsTable;
-    @FXML private TableColumn<ActiveTest, String> colTestName;
-    @FXML private TableColumn<ActiveTest, String> colOrderDate;
-    @FXML private TableColumn<ActiveTest, String> colPaymentStatus;
-    @FXML private TableColumn<ActiveTest, String> colSampleStatus;
-    @FXML private TableColumn<ActiveTest, String> colCountdown;
+    @FXML private TableView<TestRequest> activeTestsTable;
+    @FXML private TableColumn<TestRequest, String> colTestName;
+    @FXML private TableColumn<TestRequest, String> colOrderDate;
+    @FXML private TableColumn<TestRequest, String> colPaymentStatus;
+    @FXML private TableColumn<TestRequest, String> colSampleStatus;
+    @FXML private TableColumn<TestRequest, String> colCountdown;
+
+    @FXML private TableView<Result> pastResultsTable;
+    @FXML private TableColumn<Result, String> colResultTestName;
+    @FXML private TableColumn<Result, String> colResultDate;
+    @FXML private TableColumn<Result, String> colResultValue;
+    @FXML private TableColumn<Result, String> colResultFiles;
 
     /** Timer that ticks every second to refresh countdowns. */
     private Timeline countdownTimeline;
+    
+    /** Stores active tests with their countdown values for live updates */
+    private final List<TestRequestCountdown> activeTestsWithCountdown = new java.util.ArrayList<>();
+
+    private final TestRequestDao requestDao = new TestRequestDao();
+    private final ResultService resultService = new ResultService();
+    private final SampleService sampleService = new SampleService();
+    
+    private static final DateTimeFormatter DATE_FORMATTER = 
+        DateTimeFormatter.ofPattern("dd MMM yyyy");
 
     /* ================================================================
        INITIALIZATION
@@ -62,7 +82,9 @@ public class CustomerDashboardController implements Initializable {
         avatarInitials.setText(getInitials(user));
 
         setupActiveTestsTable();
-        loadData();
+        setupPastResultsTable();
+        loadActiveTests();
+        loadPastResults();
         startCountdownTimer();
     }
 
@@ -71,64 +93,80 @@ public class CustomerDashboardController implements Initializable {
        ================================================================ */
 
     private void setupActiveTestsTable() {
-        colTestName.setCellValueFactory(new PropertyValueFactory<>("testName"));
-        colOrderDate.setCellValueFactory(new PropertyValueFactory<>("orderDate"));
+        // Test Name column
+        colTestName.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getTestName()));
+        
+        // Order Date column - using getOrderDate? Actually TestRequest doesn't have getOrderDate
+        // We'll use a placeholder or get from DB. For now, show "Pending" if no date
+        colOrderDate.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(getOrderDateForRequest(cellData.getValue())));
 
         // Payment status with colored pill
-        colPaymentStatus.setCellValueFactory(new PropertyValueFactory<>("paymentStatus"));
+        colPaymentStatus.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getPaymentStatus()));
         colPaymentStatus.setCellFactory(col -> new TableCell<>() {
             private final Label pill = new Label();
-            {
-                pill.getStyleClass().add("status-pill");
-            }
+            { pill.getStyleClass().add("status-pill"); }
 
             @Override
             protected void updateItem(String status, boolean empty) {
                 super.updateItem(status, empty);
                 if (empty || status == null) {
                     setGraphic(null);
+                    setText(null);
                 } else {
-                    pill.setText(status);
+                    String displayStatus = "Paid".equalsIgnoreCase(status) ? "Paid" : "Unpaid";
+                    pill.setText(displayStatus);
                     pill.getStyleClass().removeAll("pill-paid", "pill-unpaid");
                     pill.getStyleClass().add(
                         "Paid".equalsIgnoreCase(status) ? "pill-paid" : "pill-unpaid"
                     );
                     setGraphic(pill);
+                    setText(null);
                 }
             }
         });
 
         // Sample status with colored pill
-        colSampleStatus.setCellValueFactory(new PropertyValueFactory<>("sampleStatus"));
+        colSampleStatus.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(getSampleStatusForRequest(cellData.getValue())));
         colSampleStatus.setCellFactory(col -> new TableCell<>() {
             private final Label pill = new Label();
-            {
-                pill.getStyleClass().add("status-pill");
-            }
+            { pill.getStyleClass().add("status-pill"); }
 
             @Override
             protected void updateItem(String status, boolean empty) {
                 super.updateItem(status, empty);
                 if (empty || status == null) {
                     setGraphic(null);
+                    setText(null);
                 } else {
                     pill.setText(status);
                     pill.getStyleClass().removeAll(
-                        "pill-collected", "pill-processing", "pill-validating", "pill-pending"
+                        "pill-collected", "pill-processing", "pill-pending"
                     );
                     switch (status.toLowerCase()) {
                         case "collected":  pill.getStyleClass().add("pill-collected"); break;
                         case "processing": pill.getStyleClass().add("pill-processing"); break;
-                        case "validating": pill.getStyleClass().add("pill-validating"); break;
+                        case "processed":  pill.getStyleClass().add("pill-validating"); break;
                         default:           pill.getStyleClass().add("pill-pending"); break;
                     }
                     setGraphic(pill);
+                    setText(null);
                 }
             }
         });
 
-        // Countdown column — refreshed every second by the timeline
-        colCountdown.setCellValueFactory(cd -> cd.getValue().countdownProperty());
+        // Countdown column
+        colCountdown.setCellValueFactory(cellData -> {
+            for (TestRequestCountdown wrapper : activeTestsWithCountdown) {
+                if (wrapper.getRequestId() == cellData.getValue().getId()) {
+                    return wrapper.countdownProperty();
+                }
+            }
+            return new SimpleStringProperty("--");
+        });
         colCountdown.setCellFactory(col -> new TableCell<>() {
             @Override
             protected void updateItem(String value, boolean empty) {
@@ -148,45 +186,173 @@ public class CustomerDashboardController implements Initializable {
         });
     }
 
+    private void setupPastResultsTable() {
+        // Test Name column
+        colResultTestName.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().getTestName()));
+        
+        // Result Date column (using verifiedAt)
+        colResultDate.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getVerifiedAt() != null) {
+                return new SimpleStringProperty(
+                    cellData.getValue().getVerifiedAt().toLocalDateTime().format(DATE_FORMATTER)
+                );
+            }
+            return new SimpleStringProperty("");
+        });
+        
+        // Result Value column - show numeric or text value
+        colResultValue.setCellValueFactory(cellData -> {
+            Result result = cellData.getValue();
+            if (result.getValueNumeric() != null) {
+                return new SimpleStringProperty(result.getValueNumeric().toString());
+            } else if (result.getValueText() != null && !result.getValueText().isEmpty()) {
+                return new SimpleStringProperty(result.getValueText());
+            }
+            return new SimpleStringProperty("--");
+        });
+        
+        // Files column
+        colResultFiles.setCellValueFactory(cellData -> 
+            new SimpleStringProperty(cellData.getValue().hasFile() ? "📎 View (" + cellData.getValue().getFileCount() + ")" : "--"));
+        colResultFiles.setCellFactory(col -> new TableCell<>() {
+            private final Button viewBtn = new Button("View");
+            {
+                viewBtn.getStyleClass().add("link-button");
+                viewBtn.setOnAction(e -> {
+                    Result result = getTableView().getItems().get(getIndex());
+                    handleViewResultFile(result);
+                });
+            }
+            
+            @Override
+            protected void updateItem(String value, boolean empty) {
+                super.updateItem(value, empty);
+                if (empty || value == null || "--".equals(value)) {
+                    setGraphic(null);
+                    setText(value != null ? value : "");
+                } else {
+                    setGraphic(viewBtn);
+                    setText(null);
+                }
+            }
+        });
+    }
+
     /* ================================================================
        DATA LOADING
-       TODO: Replace with real DB queries wrapped in Task<>.
        ================================================================ */
 
-    private void loadData() {
-        /*
-         * Replace this with a Task<> that queries the DB, e.g.:
-         *
-         *   Task<List<ActiveTest>> task = new Task<>() {
-         *       @Override protected List<ActiveTest> call() {
-         *           return YourDAO.getActiveTestsForUser(
-         *               Session.getInstance().getCurrentUser().getId()
-         *           );
-         *       }
-         *   };
-         *   task.setOnSucceeded(e -> {
-         *       activeTestsTable.setItems(
-         *           FXCollections.observableArrayList(task.getValue())
-         *       );
-         *   });
-         *   new Thread(task).start();
-         */
+    private void loadActiveTests() {
+        int userId = Session.getInstance().getCurrentUser().getId();
 
-        activeTestsTable.setItems(FXCollections.observableArrayList());
+        Task<List<TestRequest>> task = new Task<>() {
+            @Override
+            protected List<TestRequest> call() throws Exception {
+                // Get all requests for this customer
+                List<TestRequest> allRequests = requestDao.findByCustomer(userId);
+                if (allRequests == null) return new java.util.ArrayList<>();
+                // Filter to only active ones (not completed or cancelled)
+                return allRequests.stream()
+                    .filter(r -> !TestRequest.STATUS_COMPLETED.equals(r.getRequestStatus()))
+                    .filter(r -> !TestRequest.STATUS_CANCELLED.equals(r.getRequestStatus()))
+                    .collect(Collectors.toList());
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            List<TestRequest> activeTests = task.getValue();
+            activeTestsWithCountdown.clear();
+            for (TestRequest request : activeTests) {
+                activeTestsWithCountdown.add(new TestRequestCountdown(request));
+            }
+            activeTestsTable.setItems(FXCollections.observableArrayList(activeTests));
+        });
+        
+        task.setOnFailed(e -> {
+            task.getException().printStackTrace();
+            activeTestsTable.setItems(FXCollections.observableArrayList());
+        });
+        
+        new Thread(task).start();
+    }
+
+    private void loadPastResults() {
+        int userId = Session.getInstance().getCurrentUser().getId();
+
+        Task<List<Result>> task = new Task<>() {
+            @Override
+            protected List<Result> call() throws Exception {
+                // Get verified results for this customer
+                return resultService.getCustomerResults(userId);
+            }
+        };
+
+        task.setOnSucceeded(e -> {
+            pastResultsTable.setItems(FXCollections.observableArrayList(task.getValue()));
+        });
+        
+        task.setOnFailed(e -> {
+            task.getException().printStackTrace();
+            pastResultsTable.setItems(FXCollections.observableArrayList());
+        });
+        
+        new Thread(task).start();
+    }
+
+    /**
+     * Helper method to get order date for a test request.
+     * Since TestRequest doesn't have an order date field, we'll use created_at.
+     * Note: You may need to add created_at to TestRequest if not present.
+     */
+    private String getOrderDateForRequest(TestRequest request) {
+        // For now, return a placeholder
+        // If you add a created_at field to TestRequest, use that
+        return "Ordered";
+    }
+
+    /**
+     * Helper method to get sample status for a test request.
+     */
+    private String getSampleStatusForRequest(TestRequest request) {
+        try {
+            Sample sample = sampleService.getByRequest(request.getId());
+            if (sample != null && sample.getStatus() != null) {
+                String status = sample.getStatus();
+                switch (status) {
+                    case Sample.COLLECTED: return "Collected";
+                    case Sample.PROCESSING: return "Processing";
+                    case Sample.PROCESSED: return "Processed";
+                    default: return "Pending";
+                }
+            }
+        } catch (Exception e) {
+            // No sample found yet
+        }
+        return "Pending";
+    }
+
+    /**
+     * Handles viewing a result file.
+     */
+    private void handleViewResultFile(Result result) {
+        if (result.hasFile() && result.getFiles() != null && !result.getFiles().isEmpty()) {
+            // TODO: Open file viewer or download dialog
+            System.out.println("Viewing result file for: " + result.getTestName());
+            System.out.println("Files: " + result.getFiles().size());
+        }
     }
 
     /* ================================================================
        COUNTDOWN TIMER
-       Ticks every second, recalculates remaining time for each row.
-       The TableView auto-refreshes because countdownProperty is observable.
        ================================================================ */
 
     private void startCountdownTimer() {
         countdownTimeline = new Timeline(new KeyFrame(
             javafx.util.Duration.seconds(1),
             event -> {
-                for (ActiveTest test : activeTestsTable.getItems()) {
-                    test.refreshCountdown();
+                for (TestRequestCountdown wrapper : activeTestsWithCountdown) {
+                    wrapper.refreshCountdown();
                 }
             }
         ));
@@ -202,8 +368,6 @@ public class CustomerDashboardController implements Initializable {
 
     /* ================================================================
        CARD CLICK HANDLERS
-       Each fires the matching sidebar nav button so MainLayoutController
-       handles the page swap and highlights the active nav item.
        ================================================================ */
 
     @FXML
@@ -218,24 +382,17 @@ public class CustomerDashboardController implements Initializable {
 
     @FXML
     private void handleActiveTests(MouseEvent event) {
-        /*
-         * TODO: This could navigate to a dedicated active-tests page,
-         * or simply scroll to / highlight the table below. For now
-         * it's a no-op since the table is already visible on this page.
-         */
+        // Scroll to table or navigate to dedicated page
+        // Currently the table is visible on this dashboard
     }
 
     @FXML
     private void handleProfile(MouseEvent event) {
-        /*
-         * TODO: Navigate to a profile/settings page once it exists.
-         * For now you could load a placeholder or show a dialog.
-         */
+        fireSidebarButton("#navProfile");
     }
 
     /**
-     * Looks up a sidebar nav button by its fx:id selector
-     * and fires it, so MainLayoutController handles the switch.
+     * Looks up a sidebar nav button by its fx:id selector and fires it.
      */
     private void fireSidebarButton(String selector) {
         Button btn = (Button) welcomeLabel.getScene().lookup(selector);
@@ -256,38 +413,37 @@ public class CustomerDashboardController implements Initializable {
     }
 
     /* ================================================================
-       MODEL CLASS
+       HELPER CLASS FOR COUNTDOWN
        ================================================================ */
 
     /**
-     * Represents an active (in-progress) test request.
-     * The countdown property updates every second via the timeline.
+     * Wrapper class to hold a TestRequest with a live countdown property.
      */
-    public static class ActiveTest {
-        private final SimpleStringProperty testName;
-        private final SimpleStringProperty orderDate;
-        private final SimpleStringProperty paymentStatus;
-        private final SimpleStringProperty sampleStatus;
-        private final SimpleStringProperty countdown;
-        private final LocalDateTime estimatedReady;
-
-        private static final DateTimeFormatter FMT =
-            DateTimeFormatter.ofPattern("dd MMM yyyy");
-
-        public ActiveTest(String testName, LocalDateTime orderDate,
-                          String paymentStatus, String sampleStatus,
-                          LocalDateTime estimatedReady) {
-            this.testName = new SimpleStringProperty(testName);
-            this.orderDate = new SimpleStringProperty(orderDate.format(FMT));
-            this.paymentStatus = new SimpleStringProperty(paymentStatus);
-            this.sampleStatus = new SimpleStringProperty(sampleStatus);
-            this.estimatedReady = estimatedReady;
-            this.countdown = new SimpleStringProperty();
+    private static class TestRequestCountdown {
+        private final int requestId;
+        private final LocalDateTime expectedReadyAt;
+        private final javafx.beans.property.SimpleStringProperty countdown;
+        
+        TestRequestCountdown(TestRequest request) {
+            this.requestId = request.getId();
+            this.expectedReadyAt = request.getExpectedReadyAt() != null 
+                ? request.getExpectedReadyAt().toLocalDateTime() 
+                : null;
+            this.countdown = new javafx.beans.property.SimpleStringProperty();
             refreshCountdown();
         }
-
-        public void refreshCountdown() {
-            Duration remaining = Duration.between(LocalDateTime.now(), estimatedReady);
+        
+        int getRequestId() { return requestId; }
+        
+        javafx.beans.property.StringProperty countdownProperty() { return countdown; }
+        
+        void refreshCountdown() {
+            if (expectedReadyAt == null) {
+                countdown.set("--");
+                return;
+            }
+            
+            Duration remaining = Duration.between(LocalDateTime.now(), expectedReadyAt);
             if (remaining.isNegative() || remaining.isZero()) {
                 countdown.set("Ready!");
             } else {
@@ -297,12 +453,5 @@ public class CustomerDashboardController implements Initializable {
                 countdown.set(String.format("%dh %02dm %02ds", hours, mins, secs));
             }
         }
-
-        public String getTestName()      { return testName.get(); }
-        public String getOrderDate()     { return orderDate.get(); }
-        public String getPaymentStatus() { return paymentStatus.get(); }
-        public String getSampleStatus()  { return sampleStatus.get(); }
-        public String getCountdown()     { return countdown.get(); }
-        public StringProperty countdownProperty() { return countdown; }
     }
 }

@@ -85,6 +85,25 @@ public class AttendantDashboardController implements Initializable {
        CARD HANDLERS  -> fire the matching sidebar nav button
        ================================================================ */
 
+    /* ================================================================
+       STAT CARD HANDLERS  -> navigate to the matching section
+       ================================================================ */
+
+    @FXML
+    private void handleStatPayments(MouseEvent event) {
+        fireSidebarButton("#navRequestQueue");
+    }
+
+    @FXML
+    private void handleStatSamples(MouseEvent event) {
+        fireSidebarButton("#navSampleTracking");
+    }
+
+    @FXML
+    private void handleStatResults(MouseEvent event) {
+        fireSidebarButton("#navResultUpload");
+    }
+
     @FXML
     private void handleRequestQueue(MouseEvent event) {
         fireSidebarButton("#navRequestQueue");

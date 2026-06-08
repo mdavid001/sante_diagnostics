@@ -193,7 +193,7 @@
                     <RowConstraints />
                 </rowConstraints>
 
-                <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="0">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStatUsers" spacing="14.0" styleClass="stat-card " GridPane.columnIndex="0">
                     <StackPane styleClass="stat-icon-box stat-icon-cyan">
                         <FontAwesomeIconView glyphName="USERS" size="18" styleClass="glyph-icon" />
                     </StackPane>
@@ -203,7 +203,7 @@
                     </VBox>
                 </HBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="1">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStatTests" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="1">
                     <StackPane styleClass="stat-icon-box stat-icon-green">
                         <FontAwesomeIconView glyphName="FLASK" size="18" styleClass="glyph-icon" />
                     </StackPane>
@@ -213,7 +213,7 @@
                     </VBox>
                 </HBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="2">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStatRequests" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="2">
                     <StackPane styleClass="stat-icon-box stat-icon-amber">
                         <FontAwesomeIconView glyphName="INBOX" size="18" styleClass="glyph-icon" />
                     </StackPane>

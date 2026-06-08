@@ -89,6 +89,25 @@ public class AdminDashboardController implements Initializable {
        CARD HANDLERS  -> fire the matching sidebar nav button
        ================================================================ */
 
+    /* ================================================================
+       STAT CARD HANDLERS  -> navigate to the matching section
+       ================================================================ */
+
+    @FXML
+    private void handleStatUsers(MouseEvent event) {
+        fireSidebarButton("#navUserManagement");
+    }
+
+    @FXML
+    private void handleStatTests(MouseEvent event) {
+        fireSidebarButton("#navTestBuilder");
+    }
+
+    @FXML
+    private void handleStatRequests(MouseEvent event) {
+        fireSidebarButton("#navRequestQueue");
+    }
+
     @FXML
     private void handleUserManagement(MouseEvent event) {
         fireSidebarButton("#navUserManagement");

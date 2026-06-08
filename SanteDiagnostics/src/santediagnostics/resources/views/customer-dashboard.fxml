@@ -197,5 +197,26 @@
             </TableView>
         </VBox>
 
+        <!-- ==================== PAST RESULTS TABLE ==================== -->
+        <VBox spacing="10.0">
+            <HBox alignment="CENTER_LEFT" spacing="8.0">
+                <Label styleClass="section-title" text="Past Results" />
+                <Region HBox.hgrow="ALWAYS" />
+                <Label styleClass="muted-label" text="Your verified test results" />
+            </HBox>
+
+            <TableView fx:id="pastResultsTable" prefHeight="200.0" styleClass="data-table">
+                <columns>
+                    <TableColumn fx:id="colResultTestName" prefWidth="200.0" text="Test" />
+                    <TableColumn fx:id="colResultDate" prefWidth="140.0" text="Result Date" />
+                    <TableColumn fx:id="colResultValue" prefWidth="180.0" text="Result" />
+                    <TableColumn fx:id="colResultFiles" prefWidth="120.0" text="Files" />
+                </columns>
+                <placeholder>
+                    <Label styleClass="muted-label" text="No results yet." />
+                </placeholder>
+            </TableView>
+        </VBox>
+
     </VBox>
 </ScrollPane>

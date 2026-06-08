@@ -77,10 +77,10 @@
             <TableView fx:id="auditTable" styleClass="data-table" prefHeight="500.0"
                        minWidth="940.0">
                 <columns>
-                    <TableColumn fx:id="colTime" prefWidth="170.0" text="When" />
+                    <TableColumn fx:id="colTime" prefWidth="170.0" text="Date" />
                     <TableColumn fx:id="colActor" prefWidth="170.0" text="User" />
                     <TableColumn fx:id="colAction" prefWidth="180.0" text="Action" />
-                    <TableColumn fx:id="colEntity" prefWidth="160.0" text="Entity" />
+                    <TableColumn fx:id="colEntity" prefWidth="160.0" text="ID" />
                     <TableColumn fx:id="colDetails" prefWidth="240.0" text="Details" />
                 </columns>
                 <placeholder>

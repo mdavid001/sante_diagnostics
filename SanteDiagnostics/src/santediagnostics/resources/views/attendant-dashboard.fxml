@@ -191,7 +191,7 @@
                     <RowConstraints />
                 </rowConstraints>
 
-                <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="0">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStatPayments" spacing="14.0" styleClass="stat-card stat-card-clickable" GridPane.columnIndex="0">
                     <StackPane styleClass="stat-icon-box stat-icon-amber">
                         <FontAwesomeIconView glyphName="MONEY" size="18" styleClass="glyph-icon" />
                     </StackPane>
@@ -201,7 +201,7 @@
                     </VBox>
                 </HBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="1">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStatSamples" spacing="14.0" styleClass="stat-card stat-card-clickable" GridPane.columnIndex="1">
                     <StackPane styleClass="stat-icon-box stat-icon-cyan">
                         <FontAwesomeIconView glyphName="FLASK" size="18" styleClass="glyph-icon" />
                     </StackPane>
@@ -211,7 +211,7 @@
                     </VBox>
                 </HBox>
 
-                <HBox alignment="CENTER_LEFT" spacing="14.0" styleClass="stat-card" GridPane.columnIndex="2">
+                <HBox alignment="CENTER_LEFT" onMouseClicked="#handleStatResults" spacing="14.0" styleClass="stat-card stat-card-clickable" GridPane.columnIndex="2">
                     <StackPane styleClass="stat-icon-box stat-icon-green">
                         <FontAwesomeIconView glyphName="UPLOAD" size="18" styleClass="glyph-icon" />
                     </StackPane>
