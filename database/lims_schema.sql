@@ -171,12 +171,16 @@ CREATE INDEX idx_tokens_user           ON verification_tokens(user_id);
 INSERT INTO lab_settings (id, lab_name, bank_name, bank_account_name, bank_account_number)
 VALUES (1, 'Sante Diagnostics Ltd', 'First Bank of Nigeria', 'Sante Diagnostics Ltd', '0123456789');
 
+-- Bootstrap Super Admin account.
+-- Email:    admin@sante.test
+-- Password: admin123
+-- must_change_password = TRUE so the first login forces a fresh password.
 INSERT INTO users (first_name, last_name, email, password, role, email_verified, must_change_password)
 VALUES (
     'System',
     'Administrator',
     'admin@sante.test',
-    '$2a$12$SliFRzT0ucHygm8Jnwx2JuwM3oqntQKBbjNpv7imDCiHj903TypnO',
+    '$2a$12$m5AbwNRv11uBlibo1zh8ue7JFrBYrrMncmC8EDLN2XvLTVI8qQhpy',
     'super_admin',
     TRUE,
     TRUE

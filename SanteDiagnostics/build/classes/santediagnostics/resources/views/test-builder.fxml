@@ -64,8 +64,8 @@
                     <TableColumn fx:id="colTat"         prefWidth="80.0"  text="TAT"/>
                     <TableColumn fx:id="colFormat"      prefWidth="90.0"  text="Format"/>
                     <TableColumn fx:id="colStatus"      prefWidth="90.0"  text="Status"/>
-                    <TableColumn fx:id="colEdit"        prefWidth="70.0"  text=""/>
-                    <TableColumn fx:id="colToggle"      prefWidth="100.0" text=""/>
+                    <TableColumn fx:id="colEdit"        prefWidth="90.0"  text=""/>
+                    <TableColumn fx:id="colToggle"      prefWidth="120.0" text=""/>
                 </columns>
                 <placeholder>
                     <Label styleClass="muted-label" text="No tests yet. Click '+ New Test' to add one."/>

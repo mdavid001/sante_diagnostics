@@ -21,6 +21,7 @@ import jakarta.mail.MessagingException;
 public class VerificationService {
 
     private static final String TYPE_EMAIL = "email_verification";
+    private static final String TYPE_RESET = "password_reset";
     private static final String CODE_ALPHABET = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789";
     private static final int CODE_LENGTH = 6;
     private static final int EXPIRY_HOURS = 24;
@@ -28,6 +29,7 @@ public class VerificationService {
     private final VerificationTokenDao tokenDao = new VerificationTokenDao();
     private final UserDao userDao = new UserDao();
     private final EmailService emailService = new EmailService();
+    private final AuthService authService = new AuthService();
     private final SecureRandom random = new SecureRandom();
 
     /**
@@ -69,6 +71,58 @@ public class VerificationService {
         tokenDao.markUsed(trimmed);
         return true;
     }
+
+    // ----------------------------------------------------------------
+    //  PASSWORD RESET
+    // ----------------------------------------------------------------
+
+    /**
+     * Sends a 6-character password-reset code to the email on file.
+     * Silently returns true if the email isn't on file so the UI can't
+     * be used to probe which accounts exist.
+     */
+    public boolean startPasswordReset(String email) throws SQLException, MessagingException {
+        int userId = userDao.findIdByEmail(email);
+        if (userId == -1) {
+            return false;
+        }
+        String code = generateCode();
+        Timestamp expiresAt = Timestamp.from(
+                Instant.now().plus(EXPIRY_HOURS, ChronoUnit.HOURS));
+        tokenDao.create(userId, code, TYPE_RESET, expiresAt);
+
+        String firstName = userDao.findFirstNameById(userId);
+        emailService.sendPasswordResetEmail(email, firstName, code);
+        return true;
+    }
+
+    /**
+     * Validates the reset code and, if valid, updates the password
+     * (BCrypt-hashed) and burns the code so it can't be reused.
+     *
+     * @return true on success; false if the code was wrong, expired,
+     *         or already used.
+     */
+    public boolean resetPassword(String code, String newPlainPassword) throws SQLException {
+        if (code == null || code.trim().isEmpty()) return false;
+        if (newPlainPassword == null || newPlainPassword.length() < 6) return false;
+
+        String trimmed = code.trim().toUpperCase();
+        int userId = tokenDao.findValidUserId(trimmed, TYPE_RESET);
+        if (userId == -1) {
+            return false;
+        }
+
+        boolean changed = authService.changePassword(userId, newPlainPassword);
+        if (changed) {
+            tokenDao.markUsed(trimmed);
+        }
+        return changed;
+    }
+
+    // ----------------------------------------------------------------
+    //  INTERNAL
+    // ----------------------------------------------------------------
 
     private String generateCode() {
         StringBuilder sb = new StringBuilder(CODE_LENGTH);

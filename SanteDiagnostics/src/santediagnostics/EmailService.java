@@ -80,6 +80,22 @@ public class EmailService {
         send(to, subject, body);
     }
 
+    /** The email sent to a user who requested a password reset. */
+    public void sendPasswordResetEmail(String to, String firstName, String code)
+            throws MessagingException {
+        String subject = "Reset your Sante Diagnostics password";
+        String body = "Hi " + safe(firstName) + ",\n\n"
+                + "We received a request to reset the password on your account.\n"
+                + "Your password reset code is:\n\n"
+                + "    " + code + "\n\n"
+                + "Enter this code in the app along with your new password. "
+                + "The code expires in 24 hours.\n\n"
+                + "If you did not request a reset, you can ignore this email -- "
+                + "your password will not change.\n\n"
+                + "Sante Diagnostics";
+        send(to, subject, body);
+    }
+
     /** The email sent to a customer when their result has been verified. */
     public void sendResultReadyEmail(String to, String firstName, String testName)
             throws MessagingException {

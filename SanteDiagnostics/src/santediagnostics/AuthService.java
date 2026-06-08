@@ -17,6 +17,8 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 public class AuthService {
 
+    private final AuditService audit = new AuditService();
+
     /** Result wrapper so callers can distinguish failure reasons. */
     public enum SignUpResult { SUCCESS, EMAIL_TAKEN, ERROR }
 
@@ -33,15 +35,19 @@ public class AuthService {
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                int userId = rs.getInt("id");
                 String storedHash = rs.getString("password");
                 if (storedHash != null && BCrypt.checkpw(plainPassword, storedHash)) {
                     boolean isActive = rs.getBoolean("is_active");
                     if (!isActive) {
+                        audit.log(userId, AuditService.LOGIN_FAILED,
+                                AuditService.ENTITY_USER, userId,
+                                "{\"reason\":\"deactivated\"}");
                         throw new IllegalStateException(
                             "This account has been deactivated. Please contact the lab.");
                     }
-                    return new User(
-                            rs.getInt("id"),
+                    User u = new User(
+                            userId,
                             rs.getString("first_name"),
                             rs.getString("last_name"),
                             rs.getString("email"),
@@ -49,10 +55,22 @@ public class AuthService {
                             rs.getBoolean("must_change_password"),
                             isActive
                     );
+                    audit.log(userId, AuditService.LOGIN_SUCCESS,
+                            AuditService.ENTITY_USER, userId);
+                    return u;
                 }
+                // Wrong password for an existing account.
+                audit.log(userId, AuditService.LOGIN_FAILED,
+                        AuditService.ENTITY_USER, userId,
+                        "{\"reason\":\"bad_password\"}");
+            } else {
+                // No such email. Actor is unknown; log with null.
+                audit.log(null, AuditService.LOGIN_FAILED,
+                        AuditService.ENTITY_USER, null,
+                        "{\"reason\":\"unknown_email\"}");
             }
         }
-    
+
         return null;
     }
 
@@ -75,7 +93,8 @@ public class AuthService {
                     "INSERT INTO users "
                     + "(first_name, last_name, email, password, role, "
                     + " must_change_password, email_verified) "
-                    + "VALUES (?, ?, ?, ?, ?::user_role, ?, ?)"
+                    + "VALUES (?, ?, ?, ?, ?::user_role, ?, ?) "
+                    + "RETURNING id"
             );
             insert.setString(1, firstName);
             insert.setString(2, lastName);
@@ -85,8 +104,16 @@ public class AuthService {
             insert.setBoolean(6, false);   // self-chosen password
             insert.setBoolean(7, false);   // pending email verification
 
-            return insert.executeUpdate() > 0
-                    ? SignUpResult.SUCCESS : SignUpResult.ERROR;
+            ResultSet rs = insert.executeQuery();
+            if (rs.next()) {
+                int newId = rs.getInt(1);
+                // Self-registration: the new user IS the actor.
+                audit.log(newId, AuditService.USER_REGISTERED,
+                        AuditService.ENTITY_USER, newId,
+                        "{\"role\":\"customer\"}");
+                return SignUpResult.SUCCESS;
+            }
+            return SignUpResult.ERROR;
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -107,7 +134,12 @@ public class AuthService {
             );
             stmt.setString(1, hash(newPlainPassword));
             stmt.setInt(2, userId);
-            return stmt.executeUpdate() > 0;
+            boolean changed = stmt.executeUpdate() > 0;
+            if (changed) {
+                audit.log(userId, AuditService.PASSWORD_CHANGED,
+                        AuditService.ENTITY_USER, userId);
+            }
+            return changed;
         }
     }
 

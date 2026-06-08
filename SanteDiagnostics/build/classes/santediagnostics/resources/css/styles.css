@@ -110,7 +110,7 @@
     -fx-font-weight: bold;
     -fx-background-radius: 9;
     -fx-cursor: hand;
-    -fx-padding: 11 0 11 0;
+    -fx-padding: 11 18 11 18;
 }
 
 .primary-btn:hover {
@@ -131,7 +131,7 @@
     -fx-text-fill: #11242A;
     -fx-font-size: 13px;
     -fx-cursor: hand;
-    -fx-padding: 10 0 10 0;
+    -fx-padding: 10 16 10 16;
 }
 
 .ghost-btn:hover {

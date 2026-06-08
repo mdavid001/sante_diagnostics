@@ -28,12 +28,21 @@ public class AuditService {
     public static final String RESULT_UPLOADED   = "RESULT_UPLOADED";
     public static final String RESULT_VERIFIED   = "RESULT_VERIFIED";
     public static final String RESULT_REJECTED   = "RESULT_REJECTED";
+    // User-management actions
+    public static final String USER_REGISTERED   = "USER_REGISTERED";
+    public static final String USER_CREATED      = "USER_CREATED";
+    public static final String USER_ACTIVATED    = "USER_ACTIVATED";
+    public static final String USER_DEACTIVATED  = "USER_DEACTIVATED";
+    public static final String PASSWORD_CHANGED  = "PASSWORD_CHANGED";
+    public static final String LOGIN_SUCCESS     = "LOGIN_SUCCESS";
+    public static final String LOGIN_FAILED      = "LOGIN_FAILED";
 
     // Entity types
     public static final String ENTITY_TEST    = "test";
     public static final String ENTITY_REQUEST = "test_request";
     public static final String ENTITY_SAMPLE  = "sample";
     public static final String ENTITY_RESULT  = "result";
+    public static final String ENTITY_USER    = "user";
 
     private final AuditDao dao = new AuditDao();
 
@@ -47,7 +56,8 @@ public class AuditService {
                     Integer entityId, String detailsJson) {
         try {
             dao.insert(actorUserId, action, entityType, entityId, detailsJson);
-        } catch (SQLException ex) {
+        } catch (Exception ex) {
+            // Best-effort. Audit failures must never break the action they record.
             LOG.log(Level.WARNING, "Failed to write audit entry: " + action, ex);
         }
     }

@@ -23,6 +23,8 @@ import org.mindrot.jbcrypt.BCrypt;
  */
 public class UserService {
 
+    private final AuditService audit = new AuditService();
+
     // ----------------------------------------------------------------
     //  CREATE
     // ----------------------------------------------------------------
@@ -110,6 +112,12 @@ public class UserService {
 
         User newUser = new User(newId, firstName.trim(), lastName.trim(),
                 emailTrimmed, role, true, true);
+
+        // Audit: who created whom, in what role.
+        audit.log(createdBy.getId(), AuditService.USER_CREATED,
+                AuditService.ENTITY_USER, newId,
+                "{\"role\":\"" + role + "\"}");
+
         return new CreateResult(newUser, tempPassword);
     }
 
@@ -166,15 +174,26 @@ public class UserService {
     //  TOGGLE ACTIVE
     // ----------------------------------------------------------------
 
-    /** Activates or deactivates a user. Returns the new is_active value. */
-    public boolean toggleActive(int userId) throws SQLException {
+    /**
+     * Activates or deactivates a user. Returns the new is_active value.
+     * @param userId   user being toggled
+     * @param actorUserId  staff member performing the action (for audit)
+     */
+    public boolean toggleActive(int userId, int actorUserId) throws SQLException {
         String sql = "UPDATE users SET is_active = NOT is_active WHERE id = ? "
                 + "RETURNING is_active";
         try (Connection conn = DatabaseConnection.getConnect();
              PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setInt(1, userId);
             try (ResultSet rs = stmt.executeQuery()) {
-                if (rs.next()) return rs.getBoolean(1);
+                if (rs.next()) {
+                    boolean nowActive = rs.getBoolean(1);
+                    audit.log(actorUserId,
+                            nowActive ? AuditService.USER_ACTIVATED
+                                      : AuditService.USER_DEACTIVATED,
+                            AuditService.ENTITY_USER, userId);
+                    return nowActive;
+                }
                 throw new SQLException("User not found: " + userId);
             }
         }

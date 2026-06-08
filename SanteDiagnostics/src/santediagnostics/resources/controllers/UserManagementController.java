@@ -292,10 +292,11 @@ public class UserManagementController implements Initializable {
 
     private void handleToggleActive(UserRow row) {
         setBusy(true);
+        final int actorId = Session.getInstance().getCurrentUser().getId();
         Task<Boolean> task = new Task<>() {
             @Override
             protected Boolean call() throws Exception {
-                return userService.toggleActive(row.id);
+                return userService.toggleActive(row.id, actorId);
             }
         };
         task.setOnSucceeded(e -> { setBusy(false); loadUsers(); });

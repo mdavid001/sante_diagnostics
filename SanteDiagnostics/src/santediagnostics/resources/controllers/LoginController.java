@@ -185,6 +185,9 @@ public class LoginController implements Initializable {
         loginTask.setOnFailed(e -> {
             overlayPane.setVisible(false);
             Throwable ex = loginTask.getException();
+            if (ex != null) {
+                ex.printStackTrace();   // surface to NetBeans Output
+            }
             if (ex instanceof IllegalStateException) {
                 showErrorPopup("Account Deactivated", ex.getMessage());
             } else {
@@ -347,6 +350,18 @@ public class LoginController implements Initializable {
 
     @FXML private void switchToSignUpTab() { tabPane.getSelectionModel().select(signUpTab); }
     @FXML private void switchToLoginTab()  { tabPane.getSelectionModel().select(loginTab);  }
+
+    @FXML
+    private void handleForgotPassword() {
+        try {
+            SceneManager.switchTo("resources/views/forgot-password.fxml", false);
+        } catch (IOException ex) {
+            Logger.getLogger(LoginController.class.getName())
+                    .log(Level.SEVERE, null, ex);
+            showErrorPopup("Navigation Error",
+                    "Could not open the password-reset screen.");
+        }
+    }
 
     // ----------------------------------------------------------------
     //  HELPERS

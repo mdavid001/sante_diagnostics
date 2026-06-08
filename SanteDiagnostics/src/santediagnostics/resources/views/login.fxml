@@ -84,7 +84,8 @@
                                         </FontAwesomeIconView>
                                     </StackPane>
 
-                                    <Label styleClass="forgot-link" text="Forgot password?">
+                                    <Label onMouseClicked="#handleForgotPassword"
+                                           styleClass="forgot-link" text="Forgot password?">
                                         <VBox.margin><Insets top="10.0" /></VBox.margin>
                                     </Label>
 
