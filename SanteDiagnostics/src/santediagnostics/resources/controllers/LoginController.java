@@ -4,6 +4,7 @@ import de.jensd.fx.glyphs.fontawesome.FontAwesomeIcon;
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -24,6 +25,8 @@ import santediagnostics.AuthService;
 import santediagnostics.SceneManager;
 import santediagnostics.Session;
 import santediagnostics.User;
+import santediagnostics.UserDao;
+import santediagnostics.VerificationService;
 
 public class LoginController implements Initializable {
 
@@ -63,6 +66,8 @@ public class LoginController implements Initializable {
     private boolean showSignUpConfirmPassword;
 
     private final AuthService auth = new AuthService();
+    private final UserDao userDao = new UserDao();
+    private final VerificationService verifyService = new VerificationService();
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
@@ -125,6 +130,40 @@ public class LoginController implements Initializable {
             if (user == null) {
                 showErrorPopup("Incorrect Credentials",
                         "The email or password you entered is incorrect. Please try again.");
+                return;
+            }
+
+            // --- Email verification gate ---
+            // Customers self-register unverified. Block login until the
+            // 6-character code from the verification email has been entered.
+            // Staff-created accounts arrive with email_verified = TRUE, so
+            // they sail through this check.
+            try {
+                if (!userDao.isEmailVerified(user.getId())) {
+                    Session.getInstance().setPendingVerificationEmail(user.getEmail());
+                    // Send a fresh code in the background so they don't have
+                    // to hunt for an old one in their inbox.
+                    String pending = user.getEmail();
+                    new Thread(() -> {
+                        try { verifyService.startEmailVerification(pending); }
+                        catch (Exception sendEx) {
+                            Logger.getLogger(LoginController.class.getName())
+                                  .log(Level.WARNING, "Could not send verification email", sendEx);
+                        }
+                    }).start();
+                    try {
+                        SceneManager.switchTo("resources/views/verify-email.fxml", false);
+                    } catch (IOException ex) {
+                        showErrorPopup("Navigation Error",
+                                "Could not open the verification screen.");
+                    }
+                    return;
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(LoginController.class.getName())
+                      .log(Level.SEVERE, null, ex);
+                showErrorPopup("Login Failed",
+                        "Could not check verification status. Please try again.");
                 return;
             }
 
@@ -198,25 +237,51 @@ public class LoginController implements Initializable {
         };
 
         signUpTask.setOnSucceeded(e -> {
-            overlayPane.setVisible(false);
             switch (signUpTask.getValue()) {
                 case SUCCESS -> {
-                    showErrorPopup("Account Created",
-                            "Your account has been created successfully. Please log in.");
-                    // repurpose popup as success — title/icon swap handled below
-                    Platform.runLater(() -> {
-                        errorPopupTitle.setText("Account Created");
-                        errorPopupTitle.setStyle("-fx-text-fill: #3D9A38;");
-                        // swap icon circle colour to green
+                    // Account is in the DB but unverified. Generate + email
+                    // the 6-character code, then route to the verify screen.
+                    Session.getInstance().setPendingVerificationEmail(email);
+                    Task<Void> sendCodeTask = new Task<>() {
+                        @Override
+                        protected Void call() throws Exception {
+                            verifyService.startEmailVerification(email);
+                            return null;
+                        }
+                    };
+                    sendCodeTask.setOnSucceeded(ev -> {
+                        overlayPane.setVisible(false);
+                        try {
+                            SceneManager.switchTo("resources/views/verify-email.fxml", false);
+                        } catch (IOException ex) {
+                            showErrorPopup("Navigation Error",
+                                    "Account created but could not open the verify screen.");
+                        }
                     });
-                    tabPane.getSelectionModel().select(loginTab);
+                    sendCodeTask.setOnFailed(ev -> {
+                        overlayPane.setVisible(false);
+                        // Still route to the verify screen -- the user can
+                        // request a fresh code from there.
+                        try {
+                            SceneManager.switchTo("resources/views/verify-email.fxml", false);
+                        } catch (IOException ex) {
+                            showErrorPopup("Could Not Send Email",
+                                    "Account created, but the verification email "
+                                    + "could not be sent. Please contact support.");
+                        }
+                    });
+                    new Thread(sendCodeTask).start();
                 }
-                case EMAIL_TAKEN ->
+                case EMAIL_TAKEN -> {
+                    overlayPane.setVisible(false);
                     showErrorPopup("Email Taken",
                             "An account with that email already exists.");
-                default ->
+                }
+                default -> {
+                    overlayPane.setVisible(false);
                     showErrorPopup("Sign Up Failed",
                             "Something went wrong. Please try again.");
+                }
             }
         });
 
