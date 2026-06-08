@@ -16,7 +16,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll"
+<ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="dashboard-scroll"
             stylesheets="@../css/styles.css"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="santediagnostics.resources.controllers.ResultUploadController">
@@ -72,7 +72,7 @@
 
         <!-- Results table -->
         <StackPane>
-            <TableView fx:id="resultTable" styleClass="data-table" prefHeight="470.0">
+            <TableView fx:id="resultTable" styleClass="data-table" prefHeight="470.0" minWidth="1060.0">
                 <columns>
                     <TableColumn fx:id="colRequestId" prefWidth="70.0" text="Req #" />
                     <TableColumn fx:id="colCustomer" prefWidth="160.0" text="Customer" />

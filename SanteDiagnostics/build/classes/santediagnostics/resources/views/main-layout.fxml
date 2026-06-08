@@ -121,7 +121,7 @@
                             <Label fx:id="userNameLabel" styleClass="user-chip-name" text="User Name" />
                             <Label fx:id="userRoleLabel" styleClass="user-chip-role" text="Role" />
                         </VBox>
-                        <StackPane styleClass="user-avatar">
+                        <StackPane fx:id="userAvatar" styleClass="user-avatar" style="-fx-cursor: hand;">
                             <Label fx:id="userInitialsLabel" styleClass="user-avatar-text" text="?" />
                         </StackPane>
                     </HBox>

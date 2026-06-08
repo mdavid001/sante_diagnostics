@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll"
+<ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="dashboard-scroll"
             stylesheets="@../css/styles.css"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="santediagnostics.resources.controllers.UserManagementController">
@@ -59,7 +59,7 @@
         <!-- ── Users table with horizontal scroll ── -->
         <ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" vbarPolicy="NEVER" style="-fx-background-color: transparent; -fx-padding: 0;">
             <StackPane>
-                <TableView fx:id="userTable" styleClass="data-table" prefHeight="460.0">
+                <TableView fx:id="userTable" styleClass="data-table" prefHeight="460.0" minWidth="920.0">
                     <columns>
                         <TableColumn fx:id="colName"      prefWidth="180.0" text="Name"/>
                         <TableColumn fx:id="colEmail"     prefWidth="210.0" text="Email"/>

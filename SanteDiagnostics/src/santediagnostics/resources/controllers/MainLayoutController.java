@@ -10,6 +10,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.StackPane;
 import santediagnostics.SceneManager;
 import santediagnostics.Session;
@@ -57,11 +58,14 @@ public class MainLayoutController implements Initializable {
     @FXML private Label pageSubtitleLabel;
     @FXML private Label userNameLabel;
     @FXML private Label userRoleLabel;
-    //@FXML private Label userInitialsLabel;
+    @FXML private Label userInitialsLabel;  // ← UNCOMMENT this line
     @FXML private Label roleLabel;
 
     /* ========== Content region ========== */
     @FXML private StackPane contentArea;
+    
+    /* ========== User avatar click handler ========== */
+    @FXML private StackPane userAvatar;  // Add this to make the avatar clickable
 
     /** Tracks which nav button is currently highlighted. */
     private Button activeNavButton;
@@ -77,7 +81,12 @@ public class MainLayoutController implements Initializable {
         // Populate the topbar user chip
         userNameLabel.setText(user.getFullName());
         userRoleLabel.setText(formatRole(user.getRole()));
-        // userInitialsLabel.setText(getInitials(user));
+        userInitialsLabel.setText(getInitials(user));  // ← UNCOMMENT this line
+
+        // Make the user avatar clickable
+        if (userAvatar != null) {
+            userAvatar.setOnMouseClicked(this::handleUserAvatarClick);
+        }
 
         // Show/hide nav items per role, then load the default page
         if (user.isSuperAdmin()) {
@@ -103,7 +112,6 @@ public class MainLayoutController implements Initializable {
         hideNav(navResultUpload);
         hideNav(navCatalog);
         hideNav(navResultVault);
-        hideNav(navProfile);
         hideNav(navActiveTests);
 
         // Load admin dashboard as default landing page
@@ -120,7 +128,6 @@ public class MainLayoutController implements Initializable {
         hideNav(navAuditTrail);
         hideNav(navCatalog);
         hideNav(navResultVault);
-        hideNav(navProfile);
         hideNav(navActiveTests);
 
         // Load attendant dashboard as default landing page
@@ -247,6 +254,28 @@ public class MainLayoutController implements Initializable {
         loadContent("resources/views/active-tests.fxml");
     }
 
+    // ----- User Avatar Click Handler -----
+    
+ // ----- User Avatar Click Handler -----
+
+/**
+ * Handle click on the user avatar in the top-right corner.
+ * Navigates to the user's profile page based on their role.
+ */
+    private void handleUserAvatarClick(MouseEvent event) {
+        User user = Session.getInstance().getCurrentUser();
+
+        // Clear active nav button since profile isn't in sidebar for any role
+        if (activeNavButton != null) {
+            activeNavButton.getStyleClass().remove("nav-active");
+            activeNavButton = null;
+        }
+
+        // Use a unified profile page that adapts to the user's role
+        setPageTitle("My Profile", "View your profile details");
+        loadContent("resources/views/customer-profile.fxml");
+    }
+
     // ----- Logout -----
 
     @FXML
@@ -329,12 +358,19 @@ public class MainLayoutController implements Initializable {
     }
 
     /** Returns first-letter initials, e.g. "JD" for John Doe. */
-    /* private String getInitials(User user) {
-        String first = user.getFirstName();
-        String last = user.getLastName();
-        String initials = "";
-        if (first != null && !first.isEmpty()) initials += first.charAt(0);
-        if (last != null && !last.isEmpty()) initials += last.charAt(0);
-        return initials.toUpperCase();
-    }*/
+    private String getInitials(User user) {
+        String fullName = user.getFullName();
+        if (fullName == null || fullName.isEmpty()) return "?";
+        
+        String[] parts = fullName.trim().split("\\s+");
+        StringBuilder initials = new StringBuilder();
+        
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                initials.append(part.charAt(0));
+            }
+        }
+        
+        return initials.toString().toUpperCase();
+    }
 }

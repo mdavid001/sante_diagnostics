@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll"
+            stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="santediagnostics.resources.controllers.CustomerProfileController">
+
+    <VBox spacing="20.0" styleClass="dashboard-container">
+        <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0" /></padding>
+
+        <!-- ==================== PROFILE HEADER ==================== -->
+        <HBox alignment="CENTER_LEFT" spacing="18.0"
+              style="-fx-background-color: #0E3A3F; -fx-background-radius: 12; -fx-padding: 24 28 24 28;">
+            <StackPane styleClass="dash-avatar" style="-fx-min-width: 56; -fx-min-height: 56; -fx-max-width: 56; -fx-max-height: 56;">
+                <Label fx:id="avatarInitials" text="?" textFill="WHITE">
+                    <font><Font name="System Bold" size="20.0" /></font>
+                </Label>
+            </StackPane>
+            <VBox spacing="4.0">
+                <Label fx:id="headerNameLabel" text="Full Name" textFill="WHITE">
+                    <font><Font name="System Bold" size="20.0" /></font>
+                </Label>
+                <Label fx:id="headerEmailLabel" text="email@example.com" textFill="#9CACB0">
+                    <font><Font size="13.0" /></font>
+                </Label>
+                <Label fx:id="headerRoleLabel" text="Customer" textFill="#16B0A6">
+                    <font><Font name="System Bold" size="12.0" /></font>
+                </Label>
+            </VBox>
+        </HBox>
+
+        <!-- ==================== EDIT PROFILE ==================== -->
+        <VBox spacing="16.0"
+              style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #E4EDED; -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 24 28 24 28;">
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <FontAwesomeIconView fill="#16B0A6" glyphName="PENCIL" size="18" />
+                <Label text="Edit Profile" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+            </HBox>
+
+            <VBox spacing="6.0">
+                <Label text="First Name" styleClass="field-label" />
+                <TextField fx:id="firstNameField" styleClass="form-field" />
+            </VBox>
+
+            <VBox spacing="6.0">
+                <Label text="Last Name" styleClass="field-label" />
+                <TextField fx:id="lastNameField" styleClass="form-field" />
+            </VBox>
+
+            <VBox spacing="6.0">
+                <Label text="Email" styleClass="field-label" />
+                <TextField fx:id="emailField" styleClass="form-field" editable="false"
+                           style="-fx-opacity: 0.7;" />
+            </VBox>
+
+            <Label fx:id="profileMessage" text="" style="-fx-font-size: 12px;" />
+
+            <HBox spacing="12.0">
+                <Button text="Save Changes" onAction="#handleSaveProfile"
+                        styleClass="primary-btn">
+                    <padding><Insets top="10" right="24" bottom="10" left="24" /></padding>
+                </Button>
+            </HBox>
+        </VBox>
+
+        <!-- ==================== CHANGE PASSWORD ==================== -->
+        <VBox spacing="16.0"
+              style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #E4EDED; -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 24 28 24 28;">
+
+            <HBox alignment="CENTER_LEFT" spacing="10.0">
+                <FontAwesomeIconView fill="#16B0A6" glyphName="LOCK" size="18" />
+                <Label text="Change Password" style="-fx-font-size: 16px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+            </HBox>
+
+            <VBox spacing="6.0">
+                <Label text="Current Password" styleClass="field-label" />
+                <PasswordField fx:id="currentPasswordField" styleClass="form-field"
+                               promptText="Enter your current password" />
+            </VBox>
+
+            <VBox spacing="6.0">
+                <Label text="New Password" styleClass="field-label" />
+                <PasswordField fx:id="newPasswordField" styleClass="form-field"
+                               promptText="Enter your new password" />
+            </VBox>
+
+            <VBox spacing="6.0">
+                <Label text="Confirm New Password" styleClass="field-label" />
+                <PasswordField fx:id="confirmPasswordField" styleClass="form-field"
+                               promptText="Re-enter your new password" />
+            </VBox>
+
+            <Label fx:id="passwordMessage" text="" style="-fx-font-size: 12px;" />
+
+            <HBox spacing="12.0">
+                <Button text="Update Password" onAction="#handleChangePassword"
+                        styleClass="primary-btn">
+                    <padding><Insets top="10" right="24" bottom="10" left="24" /></padding>
+                </Button>
+            </HBox>
+        </VBox>
+
+    </VBox>
+</ScrollPane>

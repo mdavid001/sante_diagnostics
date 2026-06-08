@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    result-vault.fxml
+    Customer's results page. Shows completed test results
+    with status and a View/Download button per result.
+-->
+<StackPane stylesheets="@../css/styles.css"
+           xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1"
+           fx:controller="santediagnostics.resources.controllers.ResultVaultController">
+
+    <!-- ==================== MAIN CONTENT ==================== -->
+    <ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll">
+        <VBox spacing="20.0" styleClass="dashboard-container">
+            <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0" /></padding>
+
+            <!-- Header + Search -->
+            <VBox spacing="14.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #E4EDED; -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 20 24 20 24;">
+                <HBox alignment="CENTER_LEFT" spacing="12.0">
+                    <FontAwesomeIconView fill="#16B0A6" glyphName="FOLDER_OPEN" size="22" />
+                    <VBox spacing="2.0">
+                        <Label text="My Results" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                        <Label text="View and download your test results" styleClass="muted-label" />
+                    </VBox>
+                    <Region HBox.hgrow="ALWAYS" />
+                    <Label fx:id="resultCountLabel" text="0 results" styleClass="muted-label" />
+                </HBox>
+                <TextField fx:id="searchField" promptText="Search results by test name..."
+                           styleClass="form-field" />
+            </VBox>
+
+            <!-- Result Cards (built by controller) -->
+            <VBox fx:id="resultCardsPane" spacing="12.0" />
+
+        </VBox>
+    </ScrollPane>
+
+    <!-- ==================== RESULT VIEWER POPUP ==================== -->
+    <StackPane fx:id="viewerPopup" visible="false" managed="false"
+               style="-fx-background-color: rgba(17,36,42,0.55);">
+        <VBox alignment="CENTER" maxWidth="480.0" maxHeight="400.0" spacing="16.0"
+              style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 28 32 28 32; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);">
+
+            <!-- Close button -->
+            <HBox alignment="CENTER_RIGHT">
+                <Button text="✕" onAction="#handleCloseViewer"
+                        style="-fx-background-color: transparent; -fx-font-size: 16px; -fx-text-fill: #6B7E84; -fx-cursor: hand;" />
+            </HBox>
+
+            <!-- Result info -->
+            <VBox alignment="CENTER" spacing="6.0">
+                <FontAwesomeIconView fx:id="viewerIcon" fill="#16B0A6" glyphName="FILE_TEXT" size="36" />
+                <Label fx:id="viewerTestName" text="Test Name"
+                       style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                <Label fx:id="viewerDate" text="Completed: --"
+                       style="-fx-font-size: 13px; -fx-text-fill: #6B7E84;" />
+            </VBox>
+
+            <!-- Result value display -->
+            <VBox fx:id="viewerValueBox" spacing="8.0"
+                  style="-fx-background-color: #F4F8F8; -fx-background-radius: 10; -fx-padding: 18 22 18 22;">
+                <Label text="Result" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #6B7E84;" />
+                <Label fx:id="viewerValueLabel" text="--"
+                       style="-fx-font-size: 15px; -fx-text-fill: #11242A; -fx-wrap-text: true;" />
+            </VBox>
+
+            <!-- Download button (for PDF/image results) -->
+            <Button fx:id="viewerDownloadBtn" text="Download Report" onAction="#handleDownload"
+                    styleClass="primary-btn" maxWidth="Infinity" visible="false" managed="false">
+                <graphic><FontAwesomeIconView fill="WHITE" glyphName="DOWNLOAD" size="14" /></graphic>
+                <padding><Insets top="12" right="0" bottom="12" left="0" /></padding>
+            </Button>
+        </VBox>
+    </StackPane>
+
+</StackPane>

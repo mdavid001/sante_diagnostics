@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ToggleButton?>
+<?import javafx.scene.control.ToggleGroup?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+
+<ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="dashboard-scroll"
+            stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="santediagnostics.resources.controllers.TestBuilderController">
+
+    <VBox spacing="20.0" styleClass="dashboard-container">
+        <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0"/></padding>
+
+        <!-- ── Row 1: filter chips + count + add button ── -->
+        <HBox alignment="CENTER_LEFT" spacing="10.0">
+            <HBox spacing="8.0" styleClass="filter-bar">
+                <fx:define><ToggleGroup fx:id="filterGroup"/></fx:define>
+                <ToggleButton fx:id="filterAll" text="All" selected="true"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterAll"/>
+                <ToggleButton fx:id="filterActive" text="Active"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterActive"/>
+                <ToggleButton fx:id="filterRetired" text="Retired"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterRetired"/>
+            </HBox>
+            <Region HBox.hgrow="ALWAYS"/>
+            <Label fx:id="countLabel" styleClass="muted-label" text=""/>
+            <Button fx:id="refreshBtn" text="Refresh" onAction="#handleRefresh"
+                    styleClass="ghost-btn"/>
+            <Button text="+ New Test" onAction="#handleOpenCreate"
+                    styleClass="primary-btn"/>
+        </HBox>
+
+        <!-- ── Row 2: search bar ── -->
+        <HBox>
+            <TextField fx:id="searchField"
+                       promptText="Search by name or description…"
+                       styleClass="form-field"
+                       HBox.hgrow="ALWAYS" maxWidth="Infinity"
+                       onKeyReleased="#handleSearch"/>
+        </HBox>
+
+        <!-- ── Table + popups ── -->
+        <StackPane>
+            <TableView fx:id="testTable" styleClass="data-table" prefHeight="480.0" minWidth="920.0">
+                <columns>
+                    <TableColumn fx:id="colName"        prefWidth="170.0" text="Test Name"/>
+                    <TableColumn fx:id="colDescription" prefWidth="180.0" text="Description"/>
+                    <TableColumn fx:id="colPrice"       prefWidth="110.0" text="Price"/>
+                    <TableColumn fx:id="colTat"         prefWidth="80.0"  text="TAT"/>
+                    <TableColumn fx:id="colFormat"      prefWidth="90.0"  text="Format"/>
+                    <TableColumn fx:id="colStatus"      prefWidth="90.0"  text="Status"/>
+                    <TableColumn fx:id="colEdit"        prefWidth="70.0"  text=""/>
+                    <TableColumn fx:id="colToggle"      prefWidth="100.0" text=""/>
+                </columns>
+                <placeholder>
+                    <Label styleClass="muted-label" text="No tests yet. Click '+ New Test' to add one."/>
+                </placeholder>
+            </TableView>
+
+            <!-- Loading overlay -->
+            <StackPane fx:id="overlayPane"
+                       style="-fx-background-color: rgba(244,248,248,0.6);"
+                       visible="false" managed="false">
+                <Label styleClass="muted-label" text="Working…"/>
+            </StackPane>
+
+            <!-- ── Create / Edit form popup ── -->
+            <StackPane fx:id="formPopup"
+                       style="-fx-background-color: rgba(14,58,63,0.36);"
+                       visible="false" managed="false">
+                <VBox alignment="TOP_CENTER" maxWidth="440.0"
+                      styleClass="confirm-card" spacing="0">
+
+                    <Label fx:id="formTitle" text="Add New Test" styleClass="confirm-title">
+                        <VBox.margin><Insets bottom="4.0"/></VBox.margin>
+                    </Label>
+                    <Label text="Fill in the test details below."
+                           styleClass="confirm-message" wrapText="true" maxWidth="380.0">
+                        <VBox.margin><Insets bottom="18.0"/></VBox.margin>
+                    </Label>
+
+                    <!-- Name -->
+                    <Label text="Test Name" styleClass="form-label"
+                           maxWidth="Infinity" style="-fx-alignment:CENTER-LEFT;">
+                        <VBox.margin><Insets bottom="4.0"/></VBox.margin>
+                    </Label>
+                    <TextField fx:id="nameField" promptText="e.g. Full Blood Count"
+                               styleClass="form-field" maxWidth="380.0">
+                        <VBox.margin><Insets bottom="12.0"/></VBox.margin>
+                    </TextField>
+
+                    <!-- Description -->
+                    <Label text="Description (optional)" styleClass="form-label"
+                           maxWidth="Infinity" style="-fx-alignment:CENTER-LEFT;">
+                        <VBox.margin><Insets bottom="4.0"/></VBox.margin>
+                    </Label>
+                    <TextArea fx:id="descField" promptText="Brief description of the test"
+                              styleClass="form-field" maxWidth="380.0"
+                              prefRowCount="2" wrapText="true">
+                        <VBox.margin><Insets bottom="12.0"/></VBox.margin>
+                    </TextArea>
+
+                    <!-- Price + TAT side by side -->
+                    <HBox spacing="12.0" maxWidth="380.0">
+                        <VBox.margin><Insets bottom="12.0"/></VBox.margin>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                            <Label text="Price (₦)" styleClass="form-label"/>
+                            <TextField fx:id="priceField" promptText="e.g. 12000"
+                                       styleClass="form-field" maxWidth="Infinity"/>
+                        </VBox>
+                        <VBox spacing="4.0" HBox.hgrow="ALWAYS">
+                            <Label text="Turnaround (hours)" styleClass="form-label"/>
+                            <HBox alignment="CENTER" spacing="0.0" styleClass="qty-stepper">
+                                <Button fx:id="tatMinusBtn" text="−" onAction="#handleTatMinus"
+                                        styleClass="qty-step-btn"/>
+                                <Label fx:id="tatValueLabel" text="24" styleClass="qty-value"
+                                       alignment="CENTER" prefWidth="60" maxWidth="Infinity" HBox.hgrow="ALWAYS"/>
+                                <Button fx:id="tatPlusBtn" text="+" onAction="#handleTatPlus"
+                                        styleClass="qty-step-btn"/>
+                            </HBox>
+                        </VBox>
+                    </HBox>
+                                        
+
+                    <!-- Result format -->
+                    <Label text="Result Format" styleClass="form-label"
+                           maxWidth="Infinity" style="-fx-alignment:CENTER-LEFT;">
+                        <VBox.margin><Insets bottom="8.0"/></VBox.margin>
+                    </Label>
+                    <HBox spacing="8.0" maxWidth="380.0">
+                        <VBox.margin><Insets bottom="16.0"/></VBox.margin>
+                        <fx:define><ToggleGroup fx:id="formatGroup"/></fx:define>
+                        <ToggleButton fx:id="fmtNumeric" text="Numeric"
+                                      toggleGroup="$formatGroup"
+                                      styleClass="filter-chip" selected="true"
+                                      HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <ToggleButton fx:id="fmtText" text="Text"
+                                      toggleGroup="$formatGroup"
+                                      styleClass="filter-chip"
+                                      HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <ToggleButton fx:id="fmtPdf" text="PDF"
+                                      toggleGroup="$formatGroup"
+                                      styleClass="filter-chip"
+                                      HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                        <ToggleButton fx:id="fmtImage" text="Image"
+                                      toggleGroup="$formatGroup"
+                                      styleClass="filter-chip"
+                                      HBox.hgrow="ALWAYS" maxWidth="Infinity"/>
+                    </HBox>
+
+                    <!-- Inline error -->
+                    <Label fx:id="formError" styleClass="error-label"
+                           wrapText="true" maxWidth="380.0"
+                           visible="false" managed="false">
+                        <VBox.margin><Insets bottom="10.0"/></VBox.margin>
+                    </Label>
+
+                    <!-- Buttons -->
+                    <HBox alignment="CENTER" spacing="12.0">
+                        <VBox.margin><Insets top="4.0"/></VBox.margin>
+                        <Button text="Cancel" onAction="#handleCancelForm"
+                                styleClass="ghost-btn" prefWidth="130.0"/>
+                        <Button text="Save Test" onAction="#handleSubmitForm"
+                                styleClass="primary-btn" prefWidth="150.0"/>
+                    </HBox>
+                </VBox>
+            </StackPane>
+
+            <!-- ── Retire / Reactivate confirm popup ── -->
+            <StackPane fx:id="confirmPopup"
+                       style="-fx-background-color: rgba(14,58,63,0.36);"
+                       visible="false" managed="false">
+                <VBox alignment="CENTER" maxWidth="380.0"
+                      styleClass="confirm-card" spacing="0">
+
+                    <StackPane styleClass="confirm-icon-circle">
+                        <Label text="!" styleClass="confirm-icon-mark"/>
+                    </StackPane>
+
+                    <Label text="Are you sure?" styleClass="confirm-title">
+                        <VBox.margin><Insets top="14.0" bottom="6.0"/></VBox.margin>
+                    </Label>
+                    <Label fx:id="confirmMessage" styleClass="confirm-message"
+                           wrapText="true" maxWidth="320.0" textAlignment="CENTER">
+                        <VBox.margin><Insets bottom="22.0"/></VBox.margin>
+                    </Label>
+
+                    <HBox alignment="CENTER" spacing="12.0">
+                        <Button text="Cancel" onAction="#handleCancelConfirm"
+                                styleClass="ghost-btn" prefWidth="130.0"/>
+                        <Button text="Yes, confirm" onAction="#handleAcceptConfirm"
+                                styleClass="primary-btn" prefWidth="150.0"/>
+                    </HBox>
+                </VBox>
+            </StackPane>
+
+        </StackPane>
+    </VBox>
+</ScrollPane>

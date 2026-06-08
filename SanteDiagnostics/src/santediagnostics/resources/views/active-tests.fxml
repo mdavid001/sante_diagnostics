@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Region?>
+<?import javafx.scene.layout.VBox?>
+
+<!--
+    active-tests.fxml  (Customer)
+    Shows the customer's in-progress test orders (not yet completed/cancelled)
+    with a live countdown to when each result is expected.
+-->
+<ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="dashboard-scroll"
+            stylesheets="@../css/styles.css"
+            xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
+            fx:controller="santediagnostics.resources.controllers.ActiveTestsController">
+
+    <VBox spacing="20.0" styleClass="dashboard-container">
+        <padding><Insets top="4.0" right="4.0" bottom="20.0" left="4.0" /></padding>
+
+        <!-- Header + Search -->
+        <VBox spacing="14.0" style="-fx-background-color: white; -fx-background-radius: 12; -fx-border-color: #E4EDED; -fx-border-radius: 12; -fx-border-width: 1; -fx-padding: 20 24 20 24;">
+            <HBox alignment="CENTER_LEFT" spacing="12.0">
+                <FontAwesomeIconView fill="#16B0A6" glyphName="HOURGLASS_HALF" size="22" />
+                <VBox spacing="2.0">
+                    <Label text="Active Tests" style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                    <Label text="Track your in-progress tests and time remaining" styleClass="muted-label" />
+                </VBox>
+                <Region HBox.hgrow="ALWAYS" />
+                <Label fx:id="countLabel" text="0 active" styleClass="muted-label" />
+            </HBox>
+            <TextField fx:id="searchField" promptText="Search by test name..."
+                       styleClass="form-field" onKeyReleased="#handleSearch" />
+        </VBox>
+
+        <!-- Active tests table (horizontally scrollable when narrow) -->
+        <TableView fx:id="activeTable" styleClass="data-table" prefHeight="420.0"
+                   minWidth="760.0">
+            <columns>
+                <TableColumn fx:id="colTestName" prefWidth="200.0" text="Test" />
+                <TableColumn fx:id="colPayment" prefWidth="120.0" text="Payment" />
+                <TableColumn fx:id="colStatus" prefWidth="140.0" text="Status" />
+                <TableColumn fx:id="colCountdown" prefWidth="160.0" text="Time Remaining" />
+            </columns>
+            <placeholder>
+                <Label styleClass="muted-label" text="You have no active tests. Order one from Browse Tests." />
+            </placeholder>
+        </TableView>
+
+    </VBox>
+</ScrollPane>

@@ -182,11 +182,3 @@ VALUES (
     TRUE
 );
 
-INSERT INTO tests (name, description, price, turnaround_hours, result_format, created_by)
-VALUES
-    ('Full Blood Count', 'Routine blood panel',                12000.00, 24,  'numeric',
-        (SELECT id FROM users WHERE email = 'admin@sante.test')),
-    ('Chest X-Ray',      'Diagnostic chest imaging',           18000.00, 6,   'image',
-        (SELECT id FROM users WHERE email = 'admin@sante.test')),
-    ('Tissue Biopsy',    'Histopathology report (PDF output)', 45000.00, 120, 'pdf',
-        (SELECT id FROM users WHERE email = 'admin@sante.test'));

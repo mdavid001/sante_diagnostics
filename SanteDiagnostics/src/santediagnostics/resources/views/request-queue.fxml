@@ -19,7 +19,7 @@
     Filter chips (All / Unpaid / Paid) + table. Unpaid rows get a
     "Confirm Payment" button that calls TestRequestService.markPaid().
 -->
-<ScrollPane fitToWidth="true" hbarPolicy="NEVER" styleClass="dashboard-scroll"
+<ScrollPane fitToWidth="true" hbarPolicy="AS_NEEDED" styleClass="dashboard-scroll"
             stylesheets="@../css/styles.css"
             xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="santediagnostics.resources.controllers.RequestQueueController">
@@ -51,7 +51,7 @@
 
         <!-- Requests table -->
         <StackPane>
-            <TableView fx:id="requestTable" styleClass="data-table" prefHeight="460.0">
+            <TableView fx:id="requestTable" styleClass="data-table" prefHeight="460.0" minWidth="950.0">
                 <columns>
                     <TableColumn fx:id="colId" prefWidth="70.0" text="Req #" />
                     <TableColumn fx:id="colCustomer" prefWidth="170.0" text="Customer" />
