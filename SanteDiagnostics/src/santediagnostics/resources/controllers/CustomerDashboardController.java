@@ -1,5 +1,7 @@
 package santediagnostics.resources.controllers;
 
+import java.awt.Desktop;
+import java.io.File;
 import java.net.URL;
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -20,6 +22,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.control.Alert;
 import javafx.scene.input.MouseEvent;
 import santediagnostics.Result;
 import santediagnostics.ResultService;
@@ -218,7 +221,7 @@ public class CustomerDashboardController implements Initializable {
         colResultFiles.setCellFactory(col -> new TableCell<>() {
             private final Button viewBtn = new Button("View");
             {
-                viewBtn.getStyleClass().add("link-button");
+                viewBtn.getStyleClass().add("primary-btn");
                 viewBtn.setOnAction(e -> {
                     Result result = getTableView().getItems().get(getIndex());
                     handleViewResultFile(result);
@@ -336,12 +339,47 @@ public class CustomerDashboardController implements Initializable {
      * Handles viewing a result file.
      */
     private void handleViewResultFile(Result result) {
-        if (result.hasFile() && result.getFiles() != null && !result.getFiles().isEmpty()) {
-            // TODO: Open file viewer or download dialog
-            System.out.println("Viewing result file for: " + result.getTestName());
-            System.out.println("Files: " + result.getFiles().size());
-        }
+    if (!result.hasFile() || result.getFiles() == null || result.getFiles().isEmpty()) {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("No File");
+        alert.setHeaderText(null);
+        alert.setContentText("No file is attached to this result.");
+        alert.showAndWait();
+        return;
     }
+
+    String filePath = result.getFiles().get(0).getFilePath(); // ← correct method
+
+    if (filePath == null || filePath.trim().isEmpty()) {
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("File Missing");
+        alert.setHeaderText(null);
+        alert.setContentText("The file path for this result is empty or corrupted.");
+        alert.showAndWait();
+        return;
+    }
+
+    try {
+        File document = new File(System.getProperty("user.dir"), filePath);
+
+        if (document.exists()) {
+            Desktop.getDesktop().open(document);
+        } else {
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("File Not Found");
+            alert.setHeaderText(null);
+            alert.setContentText("Could not locate the file: " + document.getAbsolutePath());
+            alert.showAndWait();
+        }
+    } catch (Exception e) {
+        e.printStackTrace();
+        Alert alert = new Alert(Alert.AlertType.ERROR);
+        alert.setTitle("System Error");
+        alert.setHeaderText(null);
+        alert.setContentText("Failed to open the document: " + e.getMessage());
+        alert.showAndWait();
+    }
+}
 
     /* ================================================================
        COUNTDOWN TIMER
