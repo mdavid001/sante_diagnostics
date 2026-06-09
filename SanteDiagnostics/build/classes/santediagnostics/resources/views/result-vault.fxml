@@ -8,6 +8,7 @@
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
@@ -51,8 +52,8 @@
     <!-- ==================== RESULT VIEWER POPUP ==================== -->
     <StackPane fx:id="viewerPopup" visible="false" managed="false"
                style="-fx-background-color: rgba(17,36,42,0.55);">
-        <VBox alignment="CENTER" maxWidth="480.0" maxHeight="400.0" spacing="16.0"
-              style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 28 32 28 32; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);">
+        <VBox alignment="CENTER" maxWidth="720.0" maxHeight="640.0" spacing="14.0"
+              style="-fx-background-color: white; -fx-background-radius: 14; -fx-padding: 24 28 24 28; -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.18), 20, 0, 0, 6);">
 
             <!-- Close button -->
             <HBox alignment="CENTER_RIGHT">
@@ -62,27 +63,51 @@
 
             <!-- Result info -->
             <VBox alignment="CENTER" spacing="6.0">
-                <FontAwesomeIconView fx:id="viewerIcon" fill="#16B0A6" glyphName="FILE_TEXT" size="36" />
+                <FontAwesomeIconView fx:id="viewerIcon" fill="#16B0A6" glyphName="FILE_TEXT" size="30" />
                 <Label fx:id="viewerTestName" text="Test Name"
                        style="-fx-font-size: 18px; -fx-font-weight: bold; -fx-text-fill: #11242A;" />
                 <Label fx:id="viewerDate" text="Completed: --"
                        style="-fx-font-size: 13px; -fx-text-fill: #6B7E84;" />
             </VBox>
 
-            <!-- Result value display -->
+            <!-- Result value (text / numeric) -->
             <VBox fx:id="viewerValueBox" spacing="8.0"
-                  style="-fx-background-color: #F4F8F8; -fx-background-radius: 10; -fx-padding: 18 22 18 22;">
+                  style="-fx-background-color: #F4F8F8; -fx-background-radius: 10; -fx-padding: 16 22 16 22;">
                 <Label text="Result" style="-fx-font-size: 12px; -fx-font-weight: bold; -fx-text-fill: #6B7E84;" />
                 <Label fx:id="viewerValueLabel" text="--"
                        style="-fx-font-size: 15px; -fx-text-fill: #11242A; -fx-wrap-text: true;" />
             </VBox>
 
-            <!-- Download button (for PDF/image results) -->
-            <Button fx:id="viewerDownloadBtn" text="Download Report" onAction="#handleDownload"
-                    styleClass="primary-btn" maxWidth="Infinity" visible="false" managed="false">
-                <graphic><FontAwesomeIconView fill="WHITE" glyphName="DOWNLOAD" size="14" /></graphic>
-                <padding><Insets top="12" right="0" bottom="12" left="0" /></padding>
-            </Button>
+            <!-- Inline IMAGE preview -->
+            <StackPane fx:id="imagePreviewBox" visible="false" managed="false"
+                       style="-fx-background-color: #F4F8F8; -fx-background-radius: 10; -fx-padding: 10;">
+                <ImageView fx:id="resultImageView" preserveRatio="true"
+                           fitWidth="640" fitHeight="420" />
+            </StackPane>
+
+            <!-- PDF stub: tells the customer to click "Open PDF" -->
+            <VBox fx:id="pdfPreviewBox" visible="false" managed="false" alignment="CENTER" spacing="6.0"
+                  style="-fx-background-color: #F4F8F8; -fx-background-radius: 10; -fx-padding: 24;">
+                <FontAwesomeIconView fill="#16B0A6" glyphName="FILE_PDF_ALT" size="42" />
+                <Label text="PDF report ready" style="-fx-font-weight: bold; -fx-text-fill: #11242A;" />
+                <Label text="Click 'Open PDF' to view it in your system's PDF reader."
+                       style="-fx-font-size: 12px; -fx-text-fill: #6B7E84;" wrapText="true" />
+            </VBox>
+
+            <!-- Action row: primary View/Open, secondary Download -->
+            <HBox fx:id="viewerActionRow" alignment="CENTER" spacing="10.0"
+                  visible="false" managed="false">
+                <Button fx:id="viewerOpenBtn" text="Open PDF" onAction="#handleOpenInSystem"
+                        styleClass="primary-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                    <graphic><FontAwesomeIconView fill="WHITE" glyphName="EXTERNAL_LINK" size="14" /></graphic>
+                    <padding><Insets top="10" right="14" bottom="10" left="14" /></padding>
+                </Button>
+                <Button fx:id="viewerDownloadBtn" text="Download" onAction="#handleDownload"
+                        styleClass="ghost-btn" HBox.hgrow="ALWAYS" maxWidth="Infinity">
+                    <graphic><FontAwesomeIconView fill="#11242A" glyphName="DOWNLOAD" size="14" /></graphic>
+                    <padding><Insets top="10" right="14" bottom="10" left="14" /></padding>
+                </Button>
+            </HBox>
         </VBox>
     </StackPane>
 

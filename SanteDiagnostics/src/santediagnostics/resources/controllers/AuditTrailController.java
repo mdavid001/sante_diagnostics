@@ -39,6 +39,7 @@ public class AuditTrailController implements Initializable {
     @FXML private javafx.scene.control.ToggleButton filterRequests;
     @FXML private javafx.scene.control.ToggleButton filterSamples;
     @FXML private javafx.scene.control.ToggleButton filterResults;
+    @FXML private javafx.scene.control.ToggleButton filterUsers;
     @FXML private Label countLabel;
     @FXML private Button refreshBtn;
 
@@ -132,6 +133,7 @@ public class AuditTrailController implements Initializable {
     @FXML private void handleFilterRequests() { currentFilter = "test_request"; applyView(); }
     @FXML private void handleFilterSamples()  { currentFilter = "sample";       applyView(); }
     @FXML private void handleFilterResults()  { currentFilter = "result";       applyView(); }
+    @FXML private void handleFilterUsers()    { currentFilter = "user";         applyView(); }
     @FXML private void handleRefresh()        { loadAudit(); }
 
     private void setBusy(boolean busy) {
@@ -193,6 +195,7 @@ public class AuditTrailController implements Initializable {
                 case "test_request": label = "Request"; break;
                 case "sample":       label = "Sample"; break;
                 case "result":       label = "Result"; break;
+                case "user":         label = "User"; break;
                 default:             label = Character.toUpperCase(type.charAt(0)) + type.substring(1);
             }
             return id == null ? label : (label + " #" + id);

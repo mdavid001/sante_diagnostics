@@ -1,6 +1,7 @@
 package santediagnostics.resources.controllers;
 
 import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView;
+import java.awt.Desktop;
 import java.io.File;
 import java.net.URL;
 import java.nio.file.Files;
@@ -21,6 +22,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.Region;
@@ -52,6 +55,11 @@ public class ResultVaultController implements Initializable {
     @FXML private Label viewerDate;
     @FXML private VBox viewerValueBox;
     @FXML private Label viewerValueLabel;
+    @FXML private StackPane imagePreviewBox;
+    @FXML private ImageView resultImageView;
+    @FXML private VBox pdfPreviewBox;
+    @FXML private HBox viewerActionRow;
+    @FXML private Button viewerOpenBtn;
     @FXML private Button viewerDownloadBtn;
 
     private List<ResultCardData> allResultCards;
@@ -227,32 +235,109 @@ public class ResultVaultController implements Initializable {
         viewerTestName.setText(result.testName);
         viewerDate.setText("Completed: " + result.uploadedAt.format(FMT));
 
-        switch (result.format) {
-            case "pdf":     viewerIcon.setGlyphName("FILE_PDF_ALT"); break;
-            case "image":   viewerIcon.setGlyphName("FILE_IMAGE_ALT"); break;
-            case "numeric": viewerIcon.setGlyphName("CALCULATOR"); break;
-            default:        viewerIcon.setGlyphName("FILE_TEXT"); break;
-        }
+        // Reset every conditional region; only the relevant one is shown.
+        setShown(viewerValueBox,    false);
+        setShown(imagePreviewBox,   false);
+        setShown(pdfPreviewBox,     false);
+        setShown(viewerActionRow,   false);
+        resultImageView.setImage(null);
 
-        if ("pdf".equals(result.format) || "image".equals(result.format)) {
-            viewerValueLabel.setText(result.value != null ? result.value : "Report available for download");
-            viewerDownloadBtn.setVisible(true);
-            viewerDownloadBtn.setManaged(true);
-            viewerDownloadBtn.setUserData(result);
-        } else {
-            viewerValueLabel.setText(result.value != null ? result.value : "No result data");
-            viewerDownloadBtn.setVisible(false);
-            viewerDownloadBtn.setManaged(false);
+        viewerDownloadBtn.setUserData(result);
+        viewerOpenBtn.setUserData(result);
+
+        switch (result.format) {
+            case "image":
+                viewerIcon.setGlyphName("FILE_IMAGE_ALT");
+                if (result.filePath != null && new File(result.filePath).exists()) {
+                    resultImageView.setImage(
+                            new Image(new File(result.filePath).toURI().toString()));
+                    setShown(imagePreviewBox, true);
+                    // Hide the "Open PDF" half of the action row for image results;
+                    // keep just the secondary Download.
+                    setShown(viewerActionRow, true);
+                    viewerOpenBtn.setVisible(false);
+                    viewerOpenBtn.setManaged(false);
+                } else {
+                    viewerValueLabel.setText("Image is unavailable.");
+                    setShown(viewerValueBox, true);
+                }
+                break;
+
+            case "pdf":
+                viewerIcon.setGlyphName("FILE_PDF_ALT");
+                if (result.filePath != null && new File(result.filePath).exists()) {
+                    setShown(pdfPreviewBox, true);
+                    setShown(viewerActionRow, true);
+                    viewerOpenBtn.setVisible(true);
+                    viewerOpenBtn.setManaged(true);
+                } else {
+                    viewerValueLabel.setText("PDF is unavailable.");
+                    setShown(viewerValueBox, true);
+                }
+                break;
+
+            case "numeric":
+                viewerIcon.setGlyphName("CALCULATOR");
+                viewerValueLabel.setText(result.value != null ? result.value : "No result data");
+                setShown(viewerValueBox, true);
+                break;
+
+            default:
+                viewerIcon.setGlyphName("FILE_TEXT");
+                viewerValueLabel.setText(result.value != null ? result.value : "No result data");
+                setShown(viewerValueBox, true);
+                break;
         }
 
         viewerPopup.setVisible(true);
         viewerPopup.setManaged(true);
     }
 
+    private void setShown(javafx.scene.Node node, boolean shown) {
+        if (node == null) return;
+        node.setVisible(shown);
+        node.setManaged(shown);
+    }
+
     @FXML
     private void handleCloseViewer() {
         viewerPopup.setVisible(false);
         viewerPopup.setManaged(false);
+        resultImageView.setImage(null);   // free the image
+    }
+
+    /**
+     * Opens the result file using the OS default viewer (PDFs open in the
+     * system PDF reader). Falls back to a helpful error if the platform
+     * does not support Desktop.open().
+     */
+    @FXML
+    private void handleOpenInSystem() {
+        ResultCardData result = (ResultCardData) viewerOpenBtn.getUserData();
+        if (result == null || result.filePath == null) return;
+        File f = new File(result.filePath);
+        if (!f.exists()) {
+            showError("The file is no longer available on the server.");
+            return;
+        }
+        try {
+            if (Desktop.isDesktopSupported()
+                    && Desktop.getDesktop().isSupported(Desktop.Action.OPEN)) {
+                Desktop.getDesktop().open(f);
+            } else {
+                showError("Your system cannot open files directly. "
+                        + "Please use Download instead.");
+            }
+        } catch (Exception ex) {
+            ex.printStackTrace();
+            showError("Could not open the file: " + ex.getMessage());
+        }
+    }
+
+    private void showError(String message) {
+        Alert a = new Alert(Alert.AlertType.ERROR, message, javafx.scene.control.ButtonType.OK);
+        a.setHeaderText(null);
+        a.showAndWait();
     }
 
     /* ================================================================
@@ -263,17 +348,28 @@ public class ResultVaultController implements Initializable {
     @FXML
     private void handleDownload() {
         ResultCardData result = (ResultCardData) viewerDownloadBtn.getUserData();
-        if (result == null || result.filePath == null) return;
+        if (result == null || result.filePath == null) {
+            showError("There is no downloadable file for this result.");
+            return;
+        }
+        File source = new File(result.filePath);
+        if (!source.exists()) {
+            showError("The file is no longer available on the server.");
+            return;
+        }
 
         // Let the user choose where to save
         FileChooser chooser = new FileChooser();
         chooser.setTitle("Save Result Report");
 
-        // Set suggested filename and filter
-        if (result.value != null && !result.value.isEmpty()) {
+        // Suggested name: prefer the original filename (carries the real
+        // extension). Fall back to "<test>.<ext-from-source>".
+        if (result.value != null && !result.value.isEmpty() && result.value.contains(".")) {
             chooser.setInitialFileName(result.value);
         } else {
-            String ext = "pdf".equals(result.format) ? ".pdf" : ".png";
+            String name = result.filePath;
+            int dot = name.lastIndexOf('.');
+            String ext = dot >= 0 ? name.substring(dot) : "";
             chooser.setInitialFileName(result.testName.replace(" ", "_") + ext);
         }
 

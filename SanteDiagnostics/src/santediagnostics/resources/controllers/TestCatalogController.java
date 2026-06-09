@@ -305,6 +305,13 @@ public class TestCatalogController implements Initializable {
             showError("Your session has expired. Please log in again.");
             return;
         }
+        if (!user.isCustomer()) {
+            // Only customers may place orders. Staff hitting this through
+            // any unintended path gets a hard refusal rather than a silent
+            // staff-as-customer row in test_requests.
+            showError("Only customer accounts can place test orders.");
+            return;
+        }
 
         final int customerId = user.getId();
         final int testId = selectedTest.id;

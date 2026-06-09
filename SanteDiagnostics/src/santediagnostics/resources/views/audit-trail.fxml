@@ -66,6 +66,9 @@
                 <ToggleButton fx:id="filterResults" text="Results"
                               toggleGroup="$filterGroup" styleClass="filter-chip"
                               onAction="#handleFilterResults" />
+                <ToggleButton fx:id="filterUsers" text="Users"
+                              toggleGroup="$filterGroup" styleClass="filter-chip"
+                              onAction="#handleFilterUsers" />
             </HBox>
             <Region HBox.hgrow="ALWAYS" />
             <Button fx:id="refreshBtn" text="Refresh" onAction="#handleRefresh"

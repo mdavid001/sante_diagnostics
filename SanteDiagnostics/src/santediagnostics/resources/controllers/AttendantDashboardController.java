@@ -120,8 +120,8 @@ public class AttendantDashboardController implements Initializable {
     }
 
     @FXML
-    private void handleCatalog(MouseEvent event) {
-        fireSidebarButton("#navCatalog");
+    private void handleUserManagement(MouseEvent event) {
+        fireSidebarButton("#navUserManagement");
     }
 
     private void fireSidebarButton(String selector) {

@@ -60,8 +60,8 @@
                 <RowConstraints minHeight="10.0" prefHeight="150.0" vgrow="SOMETIMES" />
             </rowConstraints>
 
-            <!-- Card 1: Browse Tests (filled dark) -->
-            <GridPane onMouseClicked="#handleCatalog" styleClass="dash-card-filled" GridPane.columnIndex="0" GridPane.rowIndex="0">
+            <!-- Card 1: Create Customer (filled dark) -->
+            <GridPane onMouseClicked="#handleUserManagement" styleClass="dash-card-filled" GridPane.columnIndex="0" GridPane.rowIndex="0">
                 <columnConstraints>
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
                     <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
@@ -73,10 +73,10 @@
                 <children>
                     <VBox alignment="BOTTOM_LEFT" GridPane.rowIndex="1">
                         <padding><Insets left="20.0" /></padding>
-                        <FontAwesomeIconView fill="WHITE" glyphName="LIST_ALT" size="25">
+                        <FontAwesomeIconView fill="WHITE" glyphName="USER_PLUS" size="25">
                             <VBox.margin><Insets bottom="5.0" /></VBox.margin>
                         </FontAwesomeIconView>
-                        <Label text="Browse Tests" textFill="WHITE">
+                        <Label text="Create Customer" textFill="WHITE">
                             <font><Font name="System Bold" size="14.0" /></font>
                             <VBox.margin><Insets bottom="10.0" /></VBox.margin>
                         </Label>
