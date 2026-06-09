@@ -24,6 +24,7 @@ import org.mindrot.jbcrypt.BCrypt;
 public class UserService {
 
     private final AuditService audit = new AuditService();
+    private final EmailService emailService = new EmailService();
 
     // ----------------------------------------------------------------
     //  CREATE
@@ -117,7 +118,22 @@ public class UserService {
         audit.log(createdBy.getId(), AuditService.USER_CREATED,
                 AuditService.ENTITY_USER, newId,
                 "{\"role\":\"" + role + "\"}");
+        
+        new Thread(() -> {
+        try {
+            emailService.sendWelcomeEmail(
+                emailTrimmed,
+                firstName.trim(),
+                role,
+                tempPassword
+            );
+            System.out.println(">>> Welcome email sent to: " + emailTrimmed);
+        } catch (Exception ex) {
+            System.err.println(">>> Welcome email failed: " + ex.getMessage());
+        }
+        }, "welcome-email-thread").start();
 
+   
         return new CreateResult(newUser, tempPassword);
     }
 

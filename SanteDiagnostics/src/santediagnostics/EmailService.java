@@ -29,7 +29,7 @@ import jakarta.mail.internet.MimeMessage;
  * "javax.mail" — the rest of the code is identical.
  */
 public class EmailService {
-
+    
     private static final String CONFIG_FILE = "mail.properties";
 
     private final String host;
@@ -39,9 +39,11 @@ public class EmailService {
     private final String fromName;
 
     public EmailService() {
+                       
         Properties cfg = new Properties();
         try (InputStream in = openConfig()) {
             cfg.load(in);
+            
         } catch (IOException ex) {
             throw new IllegalStateException(
                     "Could not read " + CONFIG_FILE + " (place it in the project folder).", ex);
@@ -54,13 +56,13 @@ public class EmailService {
     }
 
     private InputStream openConfig() throws IOException {
-        // Prefer a file in the working directory; fall back to the classpath.
         try {
-            return new FileInputStream(CONFIG_FILE);
+            FileInputStream fis = new FileInputStream(CONFIG_FILE);
+            return fis;
         } catch (IOException fileMiss) {
             InputStream cp = getClass().getResourceAsStream("/" + CONFIG_FILE);
             if (cp != null) {
-                return cp;
+               return cp;
             }
             throw fileMiss;
         }
@@ -95,6 +97,27 @@ public class EmailService {
                 + "Sante Diagnostics";
         send(to, subject, body);
     }
+    
+    /** Sent to a new staff-created account with their temporary password. */
+    public void sendWelcomeEmail(String to, String firstName, String role, String tempPassword)
+            throws MessagingException {
+        String prettyRole = switch (role) {
+            case "lab_attendant" -> "Lab Attendant";
+            case "super_admin"   -> "Super Admin";
+            default              -> "Customer";
+        };
+        String subject = "Your Sante Diagnostics account is ready";
+        String body = "Hi " + safe(firstName) + ",\n\n"
+                + "A " + prettyRole + " account has been created for you on "
+                + "Sante Diagnostics LIMS.\n\n"
+                + "Your login details:\n"
+                + "    Email:    " + to + "\n"
+                + "    Password: " + tempPassword + "\n\n"
+                + "You will be asked to change your password when you first log in.\n\n"
+                + "If you did not expect this email, please contact your administrator.\n\n"
+                + "Sante Diagnostics";
+        send(to, subject, body);
+    }
 
     /** The email sent to a customer when their result has been verified. */
     public void sendResultReadyEmail(String to, String firstName, String testName)
@@ -110,10 +133,13 @@ public class EmailService {
 
     private void send(String to, String subject, String body) throws MessagingException {
         Properties props = new Properties();
-        props.put("mail.smtp.auth", "true");
-        props.put("mail.smtp.starttls.enable", "true");
-        props.put("mail.smtp.host", host);
-        props.put("mail.smtp.port", port);
+        props.put("mail.smtp.auth",              "true");
+        props.put("mail.smtp.starttls.enable",   "true");
+        props.put("mail.smtp.starttls.required", "true");
+        props.put("mail.smtp.host",              host);
+        props.put("mail.smtp.port",              "587");
+        props.put("mail.smtp.user",              username);
+        
 
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
@@ -121,6 +147,7 @@ public class EmailService {
                 return new PasswordAuthentication(username, password);
             }
         });
+        session.setDebug(true);
 
         try {
             Message message = new MimeMessage(session);
@@ -128,12 +155,16 @@ public class EmailService {
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
             message.setSubject(subject);
             message.setText(body);
-            Transport.send(message);
+            Transport t = session.getTransport("smtp");
+            t.connect(host, username, password);
+            t.sendMessage(message, message.getAllRecipients());
+            t.close();
+            System.out.println("Email sent to: " + to);
         } catch (UnsupportedEncodingException ex) {
             throw new MessagingException("Bad sender name encoding", ex);
         }
     }
-
+    
     private String safe(String s) {
         return (s == null || s.isEmpty()) ? "there" : s;
     }
