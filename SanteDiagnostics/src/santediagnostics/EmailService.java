@@ -159,7 +159,7 @@ public class EmailService {
             t.connect(host, username, password);
             t.sendMessage(message, message.getAllRecipients());
             t.close();
-            System.out.println("Email sent to: " + to);
+           
         } catch (UnsupportedEncodingException ex) {
             throw new MessagingException("Bad sender name encoding", ex);
         }

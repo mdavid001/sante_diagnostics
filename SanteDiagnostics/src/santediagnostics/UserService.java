@@ -127,9 +127,8 @@ public class UserService {
                 role,
                 tempPassword
             );
-            System.out.println(">>> Welcome email sent to: " + emailTrimmed);
         } catch (Exception ex) {
-            System.err.println(">>> Welcome email failed: " + ex.getMessage());
+            
         }
         }, "welcome-email-thread").start();
 
